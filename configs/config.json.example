@@ -1,0 +1,19 @@
+{
+    "QUORUM": {
+        "ENDPOINT": "http://localhost:22000"
+    },
+    "ACCOUNT":{
+        "PRIVATEKEY": "00000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "YUGABYTEDB": {
+        "HOST": "localhost",
+        "PORT": 5433,
+        "USER": "yugabyte",
+        "PASSWORD": "yugabyte",
+        "DBNAME": "yugabyte"
+    },
+    "DROPKIT": {
+        "metaTable": "",
+        "authority": ""
+    }
+}
