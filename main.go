@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	routes "github.com/DropKit/DropKit-Adapter/router"
+	"github.com/DropKit/DropKit-Adapter/services"
 	"github.com/spf13/viper"
 )
 
@@ -14,6 +15,9 @@ func init() {
 	if err != nil {
 		print(err)
 	}
+
+	services.QuorumAlive()
+	services.DBAlive()
 }
 
 func main() {
