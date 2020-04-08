@@ -21,3 +21,7 @@ type Query_Response struct {
 	Response interface{}
 	Hash     string
 }
+
+type Auth_Response struct {
+	Result string
+}

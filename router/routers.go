@@ -18,10 +18,13 @@ type Route struct {
 var routes []Route
 
 func init() {
-	register("POST", "/api/db/create", controller.Create, nil)
-	register("POST", "/api/db/insert", controller.Insert, nil)
-	register("POST", "/api/db/select", controller.Select, nil)
+	register("POST", "/api/db/create", controller.SQLCreate, nil)
+	register("POST", "/api/db/insert", controller.SQLInsert, nil)
+	register("POST", "/api/db/select", controller.SQLSelect, nil)
 
+	register("POST", "/api/auth/grant", controller.AuthGrant, nil)
+	register("POST", "/api/auth/revoke", controller.AuthRevoke, nil)
+	register("POST", "/api/auth/verify", controller.AuthVerify, nil)
 }
 
 func NewRouter() *mux.Router {

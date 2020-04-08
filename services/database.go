@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
@@ -19,11 +20,11 @@ func Exec(command string) error {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", yugabyteHost, yugabytePort, yugabyteUser, yugabytePassword, yugabyteDBName)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		print(err)
+		log.Fatal(err)
 	}
 
 	if _, err := db.Exec(command); err != nil {
-		print(err)
+		log.Fatal(err)
 
 		return fmt.Errorf(err.Error())
 	}
