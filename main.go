@@ -16,12 +16,10 @@ func init() {
 		print(err)
 	}
 
-	services.QuorumAlive()
-	services.DBAlive()
+	services.AliveCheck()
 }
 
 func main() {
-
 	router := routes.NewRouter()
 	http.ListenAndServe(":3000", router)
 
