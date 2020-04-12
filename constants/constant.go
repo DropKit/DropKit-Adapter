@@ -25,3 +25,8 @@ type Query_Response struct {
 type Auth_Response struct {
 	Result string
 }
+
+type Auth_Verify_Response struct {
+	Result   string
+	Response bool
+}
