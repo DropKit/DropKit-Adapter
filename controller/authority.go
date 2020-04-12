@@ -15,7 +15,6 @@ import (
 
 func AuthGrant(w http.ResponseWriter, r *http.Request) {
 	authorityAddr := viper.GetString(`DROPKIT.AUTHORITY`)
-	metaTableAddress := viper.GetString(`DROPKIT.METATABLE`)
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
