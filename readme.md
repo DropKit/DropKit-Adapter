@@ -10,4 +10,6 @@
 go run main.go
 ```
 
-The API server will start at port 3000
+The API server will start at port 5000
+
+For detailed API usage, please refer to [DropKit document](https://github.com/DropKit/Documents).
