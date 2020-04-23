@@ -109,3 +109,69 @@ func SQLSelect(w http.ResponseWriter, r *http.Request) {
 		services.ResponseWithJson(w, http.StatusUnauthorized, response)
 	}
 }
+
+func SQLUpdate(w http.ResponseWriter, r *http.Request) {
+	metaTableAddress := viper.GetString(`DROPKIT.METATABLE`)
+	authorityAddr := viper.GetString(`DROPKIT.AUTHORITY`)
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var newStatement constants.DB_Statement
+	_ = json.Unmarshal(body, &newStatement)
+	sqlCommand := newStatement.Statement
+	callerPriavteKey := newStatement.PrivateKey
+	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
+
+	tableName := parser.GetTableName(sqlCommand)
+	tableAddress := services.GetMetaTable(tableName, metaTableAddress)
+	authority := services.VerifyAuthority(authorityAddr, callerPriavteKey, tableName, callerAddress)
+
+	switch authority {
+	case true:
+		services.Exec(sqlCommand)
+		aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
+		defer r.Body.Close()
+		response := constants.Exec_Response{"200", aduitTransactionHash}
+		services.ResponseWithJson(w, http.StatusOK, response)
+	case false:
+		defer r.Body.Close()
+		response := constants.Exec_Response{"401", "NULL"}
+		services.ResponseWithJson(w, http.StatusUnauthorized, response)
+	}
+}
+
+func SQLDelete(w http.ResponseWriter, r *http.Request) {
+	metaTableAddress := viper.GetString(`DROPKIT.METATABLE`)
+	authorityAddr := viper.GetString(`DROPKIT.AUTHORITY`)
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var newStatement constants.DB_Statement
+	_ = json.Unmarshal(body, &newStatement)
+	sqlCommand := newStatement.Statement
+	callerPriavteKey := newStatement.PrivateKey
+	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
+
+	tableName := parser.GetTableName(sqlCommand)
+	tableAddress := services.GetMetaTable(tableName, metaTableAddress)
+	authority := services.VerifyAuthority(authorityAddr, callerPriavteKey, tableName, callerAddress)
+
+	switch authority {
+	case true:
+		services.Exec(sqlCommand)
+		aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
+		defer r.Body.Close()
+		response := constants.Exec_Response{"200", aduitTransactionHash}
+		services.ResponseWithJson(w, http.StatusOK, response)
+	case false:
+		defer r.Body.Close()
+		response := constants.Exec_Response{"401", "NULL"}
+		services.ResponseWithJson(w, http.StatusUnauthorized, response)
+	}
+}

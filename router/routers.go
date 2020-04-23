@@ -21,6 +21,8 @@ func init() {
 	register("POST", "/api/db/create", controller.SQLCreate, nil)
 	register("POST", "/api/db/insert", controller.SQLInsert, nil)
 	register("POST", "/api/db/select", controller.SQLSelect, nil)
+	register("POST", "/api/db/update", controller.SQLUpdate, nil)
+	register("POST", "/api/db/delete", controller.SQLDelete, nil)
 
 	register("POST", "/api/auth/grant", controller.AuthGrant, nil)
 	register("POST", "/api/auth/revoke", controller.AuthRevoke, nil)
