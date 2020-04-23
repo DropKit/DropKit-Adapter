@@ -3,7 +3,8 @@ package routes
 import (
 	"net/http"
 
-	"github.com/DropKit/DropKit-Adapter/controller"
+	auth "github.com/DropKit/DropKit-Adapter/controller/auth"
+	db "github.com/DropKit/DropKit-Adapter/controller/db"
 
 	"github.com/gorilla/mux"
 )
@@ -18,15 +19,15 @@ type Route struct {
 var routes []Route
 
 func init() {
-	register("POST", "/api/db/create", controller.SQLCreate, nil)
-	register("POST", "/api/db/insert", controller.SQLInsert, nil)
-	register("POST", "/api/db/select", controller.SQLSelect, nil)
-	register("POST", "/api/db/update", controller.SQLUpdate, nil)
-	register("POST", "/api/db/delete", controller.SQLDelete, nil)
+	register("POST", "/api/db/create", db.SQLCreate, nil)
+	register("POST", "/api/db/insert", db.SQLInsert, nil)
+	register("POST", "/api/db/select", db.SQLSelect, nil)
+	register("POST", "/api/db/update", db.SQLUpdate, nil)
+	register("POST", "/api/db/delete", db.SQLDelete, nil)
 
-	register("POST", "/api/auth/grant", controller.AuthGrant, nil)
-	register("POST", "/api/auth/revoke", controller.AuthRevoke, nil)
-	register("POST", "/api/auth/verify", controller.AuthVerify, nil)
+	register("POST", "/api/auth/grant", auth.AuthGrant, nil)
+	register("POST", "/api/auth/revoke", auth.AuthRevoke, nil)
+	register("POST", "/api/auth/verify", auth.AuthVerify, nil)
 }
 
 func NewRouter() *mux.Router {

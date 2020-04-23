@@ -1,32 +1,41 @@
 package constants
 
-type Auth_Statement struct {
+type Auth struct {
 	UserName   string `json:"user_name"`
 	TableName  string `json:"table_name"`
 	PrivateKey string `json:"caller_pk"`
 }
 
-type DB_Statement struct {
+type SQL struct {
 	Statement  string `json:"db_statement"`
 	PrivateKey string `json:"caller_pk"`
 }
 
-type Exec_Response struct {
-	Result string
-	Hash   string
+type SQLExecResponse struct {
+	Code    int
+	Message string
+	Hash    string
 }
 
-type Query_Response struct {
-	Result   string
-	Response interface{}
-	Hash     string
+type SQLQueryResponse struct {
+	Code    int
+	Message string
+	Data    interface{}
+	Hash    string
 }
 
-type Auth_Response struct {
-	Result string
+type AuthResponse struct {
+	Code    int
+	Message string
 }
 
-type Auth_Verify_Response struct {
-	Result   string
+type AuthVerifyResponse struct {
+	Code     int
+	Message  string
 	Response bool
+}
+
+type ErrorResponse struct {
+	Code    int
+	Message string
 }
