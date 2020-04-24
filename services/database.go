@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 
+	"github.com/DropKit/DropKit-Adapter/logger"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 )
@@ -20,13 +20,13 @@ func Exec(command string) error {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", yugabyteHost, yugabytePort, yugabyteUser, yugabytePassword, yugabyteDBName)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Fatal(err)
+		logger.InternalLogger.WithField("component", "database").Error(err.Error())
+		return err
 	}
 
 	if _, err := db.Exec(command); err != nil {
-		log.Fatal(err)
-
-		return fmt.Errorf(err.Error())
+		logger.InternalLogger.WithField("component", "database").Warn(err.Error())
+		return err
 	}
 	return nil
 }
@@ -41,12 +41,12 @@ func Query(command string) (interface{}, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", yugabyteHost, yugabytePort, yugabyteUser, yugabytePassword, yugabyteDBName)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "database").Error(err.Error())
 	}
 
 	rows, err := db.Query(command)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "database").Warn(err.Error())
 	}
 	defer rows.Close()
 	columns, err := rows.Columns()

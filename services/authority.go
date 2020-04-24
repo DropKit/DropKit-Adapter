@@ -11,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spf13/viper"
 
+	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/contracts/authority"
 )
 
@@ -19,30 +20,30 @@ func GrantAuthority(authorityAddr string, privatekeyHex string, tableName string
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	privateKey, err := crypto.HexToECDSA(privatekeyHex)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	accountAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
 	nonce, err := quorumClient.PendingNonceAt(context.Background(), accountAddress)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	gasPrice, err := quorumClient.SuggestGasPrice(context.Background())
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	auth := bind.NewKeyedTransactor(privateKey)
@@ -55,12 +56,12 @@ func GrantAuthority(authorityAddr string, privatekeyHex string, tableName string
 
 	contractInstance, err := authority.NewAuthority(address, quorumClient)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	_, err = contractInstance.Add(auth, tableName, addUserAddress)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 }
 
@@ -69,30 +70,30 @@ func RevokeAuthority(authorityAddr string, privatekeyHex string, tableName strin
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	privateKey, err := crypto.HexToECDSA(privatekeyHex)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	accountAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
 	nonce, err := quorumClient.PendingNonceAt(context.Background(), accountAddress)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	gasPrice, err := quorumClient.SuggestGasPrice(context.Background())
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	auth := bind.NewKeyedTransactor(privateKey)
@@ -105,12 +106,12 @@ func RevokeAuthority(authorityAddr string, privatekeyHex string, tableName strin
 
 	contractInstance, err := authority.NewAuthority(address, quorumClient)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	_, err = contractInstance.Remove(auth, tableName, removeUserAddress)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 }
 
@@ -119,19 +120,19 @@ func VerifyAuthority(authorityAddr string, privatekeyHex string, tableName strin
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	address := common.HexToAddress(authorityAddr)
 
 	contractInstance, err := authority.NewAuthority(address, quorumClient)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	authority, err := contractInstance.Has(nil, tableName, checkUserAddress)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	return authority

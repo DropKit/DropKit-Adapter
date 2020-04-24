@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 
 	"net/http"
@@ -20,12 +19,16 @@ func AuthVerify(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println(err)
+		logger.WarnAPIAuthorityVerify(err)
 	}
 
 	var newStatement constants.Auth
-	_ = json.Unmarshal(body, &newStatement)
+	err = json.Unmarshal(body, &newStatement)
+	if err != nil {
+		logger.WarnAPIAuthorityVerify(err)
+	}
 	logger.InfoAPIAuthorityVerify(newStatement)
+
 	callerPriavteKey := newStatement.PrivateKey
 	checkUser := newStatement.UserName
 	checkTable := newStatement.TableName
@@ -40,12 +43,12 @@ func AuthVerify(w http.ResponseWriter, r *http.Request) {
 		switch authority {
 		case true:
 			defer r.Body.Close()
-			services.ResponseWithJson(w, response.AuthVerifyResponse(true))
+			services.NormalResponse(w, response.AuthVerifyResponse(true))
 		case false:
 			defer r.Body.Close()
-			services.ResponseWithJson(w, response.AuthVerifyResponse(false))
+			services.NormalResponse(w, response.AuthVerifyResponse(false))
 		}
 	case false:
-		services.ResponseWithJson(w, response.AuthResponseUnauthorized())
+		services.NormalResponse(w, response.AuthResponseUnauthorized())
 	}
 }

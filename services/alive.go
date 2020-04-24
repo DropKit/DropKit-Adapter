@@ -33,7 +33,7 @@ func DependencyServicesCheck() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", yugabyteHost, yugabytePort, yugabyteUser, yugabytePassword, yugabyteDBName)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 	if err = db.Ping(); err != nil {
 		logger.FatelDependencyService("YugabyteDB", err)

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 
 	"net/http"
@@ -23,12 +22,16 @@ func SQLSelect(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println(err)
+		logger.WarnAPIDatabaseSelect(err)
 	}
 
 	var newStatement constants.SQL
-	_ = json.Unmarshal(body, &newStatement)
+	err = json.Unmarshal(body, &newStatement)
+	if err != nil {
+		logger.WarnAPIDatabaseSelect(err)
+	}
 	logger.InfoAPIDatabaseSelect(newStatement)
+
 	sqlCommand := newStatement.Statement
 	callerPriavteKey := newStatement.PrivateKey
 	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
@@ -42,9 +45,9 @@ func SQLSelect(w http.ResponseWriter, r *http.Request) {
 		metadata, _ := services.Query(sqlCommand)
 		aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
 		defer r.Body.Close()
-		services.ResponseWithJson(w, response.SQLQueryResponseOk(metadata, aduitTransactionHash))
+		services.NormalResponse(w, response.SQLQueryResponseOk(metadata, aduitTransactionHash))
 	case false:
 		defer r.Body.Close()
-		services.ResponseWithJson(w, response.SQLResponseUnauthorized())
+		services.NormalResponse(w, response.SQLResponseUnauthorized())
 	}
 }

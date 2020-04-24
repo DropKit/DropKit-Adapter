@@ -3,6 +3,7 @@ package account
 import (
 	"crypto/ecdsa"
 
+	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 )
@@ -10,7 +11,7 @@ import (
 func GenerateWallet() (string, string) {
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	privateKeyBytes := crypto.FromECDSA(privateKey)
@@ -18,7 +19,7 @@ func GenerateWallet() (string, string) {
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()

@@ -22,6 +22,7 @@ func init() {
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 
+	InternalLogger.SetReportCaller(true)
 	InternalLogger.SetFormatter(&nested.Formatter{
 		HideKeys:        true,
 		FieldsOrder:     []string{"component", "path"},

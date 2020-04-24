@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/spf13/viper"
@@ -14,13 +15,13 @@ func beenConfirmed(transactionHash string) bool {
 
 	client, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	txHash := common.HexToHash(transactionHash)
 	_, isPending, err := client.TransactionByHash(context.Background(), txHash)
 	if err != nil {
-		print(err)
+		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
 	if isPending == true {

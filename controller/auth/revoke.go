@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 
 	"net/http"
@@ -20,12 +19,16 @@ func AuthRevoke(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println(err)
+		logger.WarnAPIAuthorityRevoke(err)
 	}
 
 	var newStatement constants.Auth
-	_ = json.Unmarshal(body, &newStatement)
+	err = json.Unmarshal(body, &newStatement)
+	if err != nil {
+		logger.WarnAPIAuthorityRevoke(err)
+	}
 	logger.InfoAPIAuthorityRevoke(newStatement)
+
 	callerPriavteKey := newStatement.PrivateKey
 	revokeUser := newStatement.UserName
 	revokeTable := newStatement.TableName
@@ -37,8 +40,8 @@ func AuthRevoke(w http.ResponseWriter, r *http.Request) {
 	case true:
 		services.RevokeAuthority(authorityAddr, callerPriavteKey, revokeTable, revokeUser)
 		defer r.Body.Close()
-		services.ResponseWithJson(w, response.AuthResponseOk())
+		services.NormalResponse(w, response.AuthResponseOk())
 	case false:
-		services.ResponseWithJson(w, response.AuthResponseUnauthorized())
+		services.NormalResponse(w, response.AuthResponseUnauthorized())
 	}
 }

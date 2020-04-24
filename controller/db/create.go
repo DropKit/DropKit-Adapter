@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 
 	"net/http"
@@ -23,11 +22,16 @@ func SQLCreate(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println(err)
+		logger.WarnAPIDatabaseCreate(err)
 	}
+
 	var newStatement constants.SQL
-	_ = json.Unmarshal(body, &newStatement)
+	err = json.Unmarshal(body, &newStatement)
+	if err != nil {
+		logger.WarnAPIDatabaseCreate(err)
+	}
 	logger.InfoAPIDatabaseCreate(newStatement)
+
 	sqlCommand := newStatement.Statement
 	callerPriavteKey := newStatement.PrivateKey
 	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
@@ -42,5 +46,5 @@ func SQLCreate(w http.ResponseWriter, r *http.Request) {
 	aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
 
 	defer r.Body.Close()
-	services.ResponseWithJson(w, response.SQLExecResponseOk(aduitTransactionHash))
+	services.NormalResponse(w, response.SQLExecResponseOk(aduitTransactionHash))
 }

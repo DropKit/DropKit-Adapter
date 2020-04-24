@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 
 	"net/http"
@@ -20,12 +19,16 @@ func AuthGrant(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println(err)
+		logger.WarnAPIAuthorityGrant(err)
 	}
 
 	var newStatement constants.Auth
-	_ = json.Unmarshal(body, &newStatement)
+	err = json.Unmarshal(body, &newStatement)
+	if err != nil {
+		logger.WarnAPIAuthorityGrant(err)
+	}
 	logger.InfoAPIAuthorityGrant(newStatement)
+
 	callerPriavteKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	grantTable := newStatement.TableName
@@ -37,8 +40,8 @@ func AuthGrant(w http.ResponseWriter, r *http.Request) {
 	case true:
 		services.GrantAuthority(authorityAddr, callerPriavteKey, grantTable, grantUser)
 		defer r.Body.Close()
-		services.ResponseWithJson(w, response.AuthResponseOk())
+		services.NormalResponse(w, response.AuthResponseOk())
 	case false:
-		services.ResponseWithJson(w, response.AuthResponseUnauthorized())
+		services.NormalResponse(w, response.AuthResponseUnauthorized())
 	}
 }
