@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/DropKit/DropKit-Adapter/constants"
+	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
@@ -24,6 +25,7 @@ func AuthVerify(w http.ResponseWriter, r *http.Request) {
 
 	var newStatement constants.Auth
 	_ = json.Unmarshal(body, &newStatement)
+	logger.InfoAPIAuthorityVerify(newStatement)
 	callerPriavteKey := newStatement.PrivateKey
 	checkUser := newStatement.UserName
 	checkTable := newStatement.TableName

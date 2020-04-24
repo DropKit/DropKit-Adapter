@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func AliveCheck() {
+func DependencyServicesCheck() {
 	quorumEndpoint := viper.GetString(`QUORUM.ENDPOINT`)
 	yugabyteHost := viper.GetString(`YUGABYTEDB.HOST`)
 	yugabytePort := viper.GetInt(`YUGABYTEDB.PORT`)
@@ -23,9 +23,9 @@ func AliveCheck() {
 
 	header, err := client.HeaderByNumber(context.Background(), nil)
 	if err != nil {
-		logger.FatelQuorumConnection(err)
+		logger.FatelDependencyService("Quorum", err)
 	} else {
-		logger.InfoQuorumConnection()
+		logger.InfoDependencyService("Quorum")
 	}
 
 	_ = header
@@ -36,9 +36,9 @@ func AliveCheck() {
 		print(err)
 	}
 	if err = db.Ping(); err != nil {
-		logger.FatelDBConnection(err)
+		logger.FatelDependencyService("YugabyteDB", err)
 		db.Close()
 	} else {
-		logger.InfoDBConnection()
+		logger.InfoDependencyService("YugabyteDB")
 	}
 }

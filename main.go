@@ -16,7 +16,7 @@ func init() {
 		print(err)
 	}
 
-	services.AliveCheck()
+	services.DependencyServicesCheck()
 }
 
 func main() {

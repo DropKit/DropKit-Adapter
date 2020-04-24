@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/DropKit/DropKit-Adapter/constants"
+	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/transaction"
 	"github.com/DropKit/DropKit-Adapter/package/parser"
@@ -27,6 +28,7 @@ func SQLDelete(w http.ResponseWriter, r *http.Request) {
 
 	var newStatement constants.SQL
 	_ = json.Unmarshal(body, &newStatement)
+	logger.InfoAPIDatabaseDelete(newStatement)
 	sqlCommand := newStatement.Statement
 	callerPriavteKey := newStatement.PrivateKey
 	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
