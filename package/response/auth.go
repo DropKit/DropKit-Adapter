@@ -11,7 +11,7 @@ func AuthResponseOk() interface{} {
 }
 
 func AuthResponseUnauthorized() interface{} {
-	response := constants.ErrorResponse{20101, "Unauthorized"}
+	response := constants.ErrorResponse{20201, "Unauthorized"}
 
 	return response
 }

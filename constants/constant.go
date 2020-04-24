@@ -14,14 +14,14 @@ type SQL struct {
 type SQLExecResponse struct {
 	Code    int
 	Message string
-	Hash    string
+	Audit   string
 }
 
 type SQLQueryResponse struct {
 	Code    int
 	Message string
 	Data    interface{}
-	Hash    string
+	Audit   string
 }
 
 type AuthResponse struct {
