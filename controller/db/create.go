@@ -23,28 +23,47 @@ func SQLCreate(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIDatabaseCreate(err)
+		services.NormalResponse(w, response.ResponseBadRequest())
+		return
+	}
+
+	if body != nil {
+		defer r.Body.Close()
 	}
 
 	var newStatement constants.SQL
 	err = json.Unmarshal(body, &newStatement)
 	if err != nil {
 		logger.WarnAPIDatabaseCreate(err)
+		services.NormalResponse(w, response.ResponseBadRequest())
+		return
 	}
 	logger.InfoAPIDatabaseCreate(newStatement)
 
 	sqlCommand := newStatement.Statement
 	callerPriavteKey := newStatement.PrivateKey
-	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	if err != nil {
+		services.NormalResponse(w, response.ResponsePKConvertError())
+		return
+	}
 
-	tableName := parser.GetTableName(sqlCommand)
+	tableName, err := parser.GetTableName(sqlCommand)
+	if err != nil {
+		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
+		return
+	}
 	_, tableAddress := account.GenerateWallet()
 
 	services.AddMetaTable(tableName, tableAddress, metaTableAddress, callerPriavteKey)
 	services.GrantAuthority(authorityAddr, callerPriavteKey, tableName, callerAddress)
-	services.Exec(sqlCommand)
+	err = services.Exec(sqlCommand)
+	if err != nil {
+		services.NormalResponse(w, response.SQLResponseDatabaseError(err))
+		return
+	}
 
 	aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
 
-	defer r.Body.Close()
 	services.NormalResponse(w, response.SQLExecResponseOk(aduitTransactionHash))
 }

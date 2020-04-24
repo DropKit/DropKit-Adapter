@@ -51,7 +51,7 @@ func Query(command string) (interface{}, error) {
 	defer rows.Close()
 	columns, err := rows.Columns()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	count := len(columns)
 	tableData := make([]map[string]interface{}, 0)

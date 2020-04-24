@@ -15,23 +15,26 @@ import (
 	"github.com/DropKit/DropKit-Adapter/package/crypto/contracts/authority"
 )
 
-func GrantAuthority(authorityAddr string, privatekeyHex string, tableName string, addUserAddress string) {
+func GrantAuthority(authorityAddr string, privatekeyHex string, tableName string, addUserAddress string) error {
 	quorumEndpoint := viper.GetString(`QUORUM.ENDPOINT`)
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	privateKey, err := crypto.HexToECDSA(privatekeyHex)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	accountAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
@@ -39,11 +42,13 @@ func GrantAuthority(authorityAddr string, privatekeyHex string, tableName string
 	nonce, err := quorumClient.PendingNonceAt(context.Background(), accountAddress)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	gasPrice, err := quorumClient.SuggestGasPrice(context.Background())
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	auth := bind.NewKeyedTransactor(privateKey)
@@ -57,31 +62,38 @@ func GrantAuthority(authorityAddr string, privatekeyHex string, tableName string
 	contractInstance, err := authority.NewAuthority(address, quorumClient)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	_, err = contractInstance.Add(auth, tableName, addUserAddress)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
+
+	return nil
 }
 
-func RevokeAuthority(authorityAddr string, privatekeyHex string, tableName string, removeUserAddress string) {
+func RevokeAuthority(authorityAddr string, privatekeyHex string, tableName string, removeUserAddress string) error {
 	quorumEndpoint := viper.GetString(`QUORUM.ENDPOINT`)
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	privateKey, err := crypto.HexToECDSA(privatekeyHex)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	accountAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
@@ -89,11 +101,13 @@ func RevokeAuthority(authorityAddr string, privatekeyHex string, tableName strin
 	nonce, err := quorumClient.PendingNonceAt(context.Background(), accountAddress)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	gasPrice, err := quorumClient.SuggestGasPrice(context.Background())
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	auth := bind.NewKeyedTransactor(privateKey)
@@ -107,20 +121,25 @@ func RevokeAuthority(authorityAddr string, privatekeyHex string, tableName strin
 	contractInstance, err := authority.NewAuthority(address, quorumClient)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
 
 	_, err = contractInstance.Remove(auth, tableName, removeUserAddress)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return err
 	}
+
+	return nil
 }
 
-func VerifyAuthority(authorityAddr string, privatekeyHex string, tableName string, checkUserAddress string) bool {
+func VerifyAuthority(authorityAddr string, privatekeyHex string, tableName string, checkUserAddress string) (bool, error) {
 	quorumEndpoint := viper.GetString(`QUORUM.ENDPOINT`)
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return false, err
 	}
 
 	address := common.HexToAddress(authorityAddr)
@@ -128,12 +147,14 @@ func VerifyAuthority(authorityAddr string, privatekeyHex string, tableName strin
 	contractInstance, err := authority.NewAuthority(address, quorumClient)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return false, err
 	}
 
 	authority, err := contractInstance.Has(nil, tableName, checkUserAddress)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		return false, err
 	}
 
-	return authority
+	return authority, nil
 }

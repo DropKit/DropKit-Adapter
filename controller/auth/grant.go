@@ -20,21 +20,29 @@ func AuthGrant(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIAuthorityGrant(err)
+		services.NormalResponse(w, response.ResponseBadRequest())
+		return
 	}
 
 	var newStatement constants.Auth
 	err = json.Unmarshal(body, &newStatement)
 	if err != nil {
 		logger.WarnAPIAuthorityGrant(err)
+		services.NormalResponse(w, response.ResponseBadRequest())
+		return
 	}
 	logger.InfoAPIAuthorityGrant(newStatement)
 
 	callerPriavteKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	grantTable := newStatement.TableName
-	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	if err != nil {
+		services.NormalResponse(w, response.ResponsePKConvertError())
+		return
+	}
 
-	authority := services.VerifyAuthority(authorityAddr, callerPriavteKey, grantTable, callerAddress)
+	authority, _ := services.VerifyAuthority(authorityAddr, callerPriavteKey, grantTable, callerAddress)
 
 	switch authority {
 	case true:
@@ -42,6 +50,6 @@ func AuthGrant(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		services.NormalResponse(w, response.AuthResponseOk())
 	case false:
-		services.NormalResponse(w, response.AuthResponseUnauthorized())
+		services.NormalResponse(w, response.ResponseUnauthorized())
 	}
 }

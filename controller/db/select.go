@@ -23,31 +23,49 @@ func SQLSelect(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIDatabaseSelect(err)
+		services.NormalResponse(w, response.ResponseBadRequest())
+		return
+	}
+
+	if body != nil {
+		defer r.Body.Close()
 	}
 
 	var newStatement constants.SQL
 	err = json.Unmarshal(body, &newStatement)
 	if err != nil {
 		logger.WarnAPIDatabaseSelect(err)
+		services.NormalResponse(w, response.ResponseBadRequest())
+		return
 	}
 	logger.InfoAPIDatabaseSelect(newStatement)
 
 	sqlCommand := newStatement.Statement
 	callerPriavteKey := newStatement.PrivateKey
-	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	if err != nil {
+		services.NormalResponse(w, response.ResponsePKConvertError())
+		return
+	}
 
-	tableName := parser.GetTableName(sqlCommand)
+	tableName, err := parser.GetTableName(sqlCommand)
+	if err != nil {
+		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
+		return
+	}
 	tableAddress := services.GetMetaTable(tableName, metaTableAddress)
-	authority := services.VerifyAuthority(authorityAddr, callerPriavteKey, tableName, callerAddress)
+	authority, _ := services.VerifyAuthority(authorityAddr, callerPriavteKey, tableName, callerAddress)
 
 	switch authority {
 	case true:
-		metadata, _ := services.Query(sqlCommand)
+		metadata, err := services.Query(sqlCommand)
+		if err != nil {
+			services.NormalResponse(w, response.SQLResponseDatabaseError(err))
+			return
+		}
 		aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
-		defer r.Body.Close()
 		services.NormalResponse(w, response.SQLQueryResponseOk(metadata, aduitTransactionHash))
 	case false:
-		defer r.Body.Close()
-		services.NormalResponse(w, response.SQLResponseUnauthorized())
+		services.NormalResponse(w, response.ResponseUnauthorized())
 	}
 }

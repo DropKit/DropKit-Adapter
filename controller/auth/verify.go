@@ -20,25 +20,33 @@ func AuthVerify(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIAuthorityVerify(err)
+		services.NormalResponse(w, response.ResponseBadRequest())
+		return
 	}
 
 	var newStatement constants.Auth
 	err = json.Unmarshal(body, &newStatement)
 	if err != nil {
 		logger.WarnAPIAuthorityVerify(err)
+		services.NormalResponse(w, response.ResponseBadRequest())
+		return
 	}
 	logger.InfoAPIAuthorityVerify(newStatement)
 
 	callerPriavteKey := newStatement.PrivateKey
 	checkUser := newStatement.UserName
 	checkTable := newStatement.TableName
-	callerAddress := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	if err != nil {
+		services.NormalResponse(w, response.ResponsePKConvertError())
+		return
+	}
 
-	callerAuthority := services.VerifyAuthority(authorityAddr, callerPriavteKey, checkTable, callerAddress)
+	callerAuthority, _ := services.VerifyAuthority(authorityAddr, callerPriavteKey, checkTable, callerAddress)
 
 	switch callerAuthority {
 	case true:
-		authority := services.VerifyAuthority(authorityAddr, callerPriavteKey, checkTable, checkUser)
+		authority, _ := services.VerifyAuthority(authorityAddr, callerPriavteKey, checkTable, checkUser)
 
 		switch authority {
 		case true:
@@ -49,6 +57,6 @@ func AuthVerify(w http.ResponseWriter, r *http.Request) {
 			services.NormalResponse(w, response.AuthVerifyResponse(false))
 		}
 	case false:
-		services.NormalResponse(w, response.AuthResponseUnauthorized())
+		services.NormalResponse(w, response.ResponseUnauthorized())
 	}
 }

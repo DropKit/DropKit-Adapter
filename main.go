@@ -14,7 +14,7 @@ func init() {
 	viper.AddConfigPath("./configs")
 	err := viper.ReadInConfig()
 	if err != nil {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "main").Error(err.Error())
 	}
 
 	services.DependencyServicesCheck()

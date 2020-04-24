@@ -7,19 +7,21 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-func PrivateKeyToPublicKey(privatekeyHex string) string {
+func PrivateKeyToPublicKey(privatekeyHex string) (string, error) {
 	privateKey, err := crypto.HexToECDSA(privatekeyHex)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "pk-converter").Warn(err.Error())
+		return "", err
 	}
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "pk-converter").Warn(err.Error())
+		return "", err
 	}
 
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
-	return fromAddress.String()
+	return fromAddress.String(), nil
 }

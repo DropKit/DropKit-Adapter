@@ -1,6 +1,8 @@
 package response
 
 import (
+	"strings"
+
 	"github.com/DropKit/DropKit-Adapter/constants"
 )
 
@@ -16,8 +18,15 @@ func SQLQueryResponseOk(metadata interface{}, aduitTransactionHash string) inter
 	return response
 }
 
-func SQLResponseUnauthorized() interface{} {
-	response := constants.ErrorResponse{20101, "Unauthorized"}
+func SQLResponseDatabaseError(err error) interface{} {
+	reason := (strings.Split(err.Error(), "pq: "))[1]
+	response := constants.ErrorResponseWithReason{20201, "Database error", reason}
+
+	return response
+}
+
+func SQLResponseBadSQLStatement() interface{} {
+	response := constants.ErrorResponse{20202, "Bad SQL statement"}
 
 	return response
 }
