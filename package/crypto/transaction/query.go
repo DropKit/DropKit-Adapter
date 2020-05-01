@@ -15,13 +15,13 @@ func beenConfirmed(transactionHash string) bool {
 
 	client, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "transaction-checker").Error(err.Error())
 	}
 
 	txHash := common.HexToHash(transactionHash)
 	_, isPending, err := client.TransactionByHash(context.Background(), txHash)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "transaction-checker").Error(err.Error())
 	}
 
 	if isPending == true {

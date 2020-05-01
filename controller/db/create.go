@@ -17,9 +17,6 @@ import (
 )
 
 func SQLCreate(w http.ResponseWriter, r *http.Request) {
-	metaTableAddress := viper.GetString(`DROPKIT.METATABLE`)
-	authorityAddr := viper.GetString(`DROPKIT.AUTHORITY`)
-
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIDatabaseCreate(err)
@@ -38,7 +35,6 @@ func SQLCreate(w http.ResponseWriter, r *http.Request) {
 		services.NormalResponse(w, response.ResponseBadRequest())
 		return
 	}
-	logger.InfoAPIDatabaseCreate(newStatement)
 
 	sqlCommand := newStatement.Statement
 	callerPriavteKey := newStatement.PrivateKey
@@ -53,17 +49,45 @@ func SQLCreate(w http.ResponseWriter, r *http.Request) {
 		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
 		return
 	}
-	_, tableAddress := account.GenerateWallet()
 
-	services.AddMetaTable(tableName, tableAddress, metaTableAddress, callerPriavteKey)
-	services.GrantAuthority(authorityAddr, callerPriavteKey, tableName, callerAddress)
-	err = services.Exec(sqlCommand)
+	result, err := services.HasDropKitAdmin(callerPriavteKey, callerAddress)
 	if err != nil {
-		services.NormalResponse(w, response.SQLResponseDatabaseError(err))
+		services.NormalResponse(w, response.ResponseInternalError())
 		return
 	}
 
-	aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
+	switch result {
+	case true:
+		tableAddress, err := services.AddTableMeta(tableName, callerPriavteKey)
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
+			return
+		}
 
-	services.NormalResponse(w, response.SQLExecResponseOk(aduitTransactionHash))
+		err = services.AddTableAdmin(callerPriavteKey, callerAddress, tableName)
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
+			return
+		}
+
+		err = services.Exec(sqlCommand)
+		if err != nil {
+			services.NormalResponse(w, response.SQLResponseDatabaseError(err))
+			return
+		}
+
+		err = services.Consume(callerPriavteKey, callerAddress, viper.GetInt64(`PRICE.CREATE`))
+		if err != nil {
+			services.NormalResponse(w, response.ResponseExceedsBalance())
+			return
+		}
+
+		aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
+		services.NormalResponse(w, response.SQLExecResponseOk(aduitTransactionHash))
+		logger.InfoAPIDatabaseCreate(newStatement)
+
+	case false:
+		services.NormalResponse(w, response.ResponseUnauthorized())
+		logger.WarnAPIDatabaseCreateUnAuth(callerAddress.String())
+	}
 }

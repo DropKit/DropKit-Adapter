@@ -11,45 +11,53 @@ import (
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
-	"github.com/spf13/viper"
 )
 
-func AuthGrant(w http.ResponseWriter, r *http.Request) {
-	authorityAddr := viper.GetString(`DROPKIT.AUTHORITY`)
-
+func MintToken(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		logger.WarnAPIAuthorityGrant(err)
+		logger.WarnAPIPaymentMint(err)
 		services.NormalResponse(w, response.ResponseBadRequest())
 		return
 	}
 
-	var newStatement constants.Auth
+	if body != nil {
+		defer r.Body.Close()
+	}
+
+	var newStatement constants.Token
 	err = json.Unmarshal(body, &newStatement)
 	if err != nil {
-		logger.WarnAPIAuthorityGrant(err)
+		logger.WarnAPIPaymentMint(err)
 		services.NormalResponse(w, response.ResponseBadRequest())
 		return
 	}
-	logger.InfoAPIAuthorityGrant(newStatement)
 
 	callerPriavteKey := newStatement.PrivateKey
-	grantUser := newStatement.UserName
-	grantTable := newStatement.TableName
+	amount := newStatement.Amount
 	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
 	if err != nil {
 		services.NormalResponse(w, response.ResponsePKConvertError())
 		return
 	}
 
-	authority, _ := services.VerifyAuthority(authorityAddr, callerPriavteKey, grantTable, callerAddress)
+	result, err := services.HasDropKitAdmin(callerPriavteKey, callerAddress)
+	if err != nil {
+		services.NormalResponse(w, response.ResponseInternalError())
+		return
+	}
 
-	switch authority {
+	switch result {
 	case true:
-		services.GrantAuthority(authorityAddr, callerPriavteKey, grantTable, grantUser)
-		defer r.Body.Close()
-		services.NormalResponse(w, response.AuthResponseOk())
+		hash, err := services.MintToken(amount, callerPriavteKey, callerAddress)
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
+			return
+		}
+		services.NormalResponse(w, response.PaymentResponseOk(hash))
+		logger.InfoAPIPaymentMint(newStatement)
 	case false:
 		services.NormalResponse(w, response.ResponseUnauthorized())
+		logger.WarnAPIPaymentMintUnAuth(callerAddress.String())
 	}
 }

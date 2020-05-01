@@ -12,7 +12,7 @@ var InternalLogger = logrus.New()
 func init() {
 	ServiceConnectorLogger.SetFormatter(&nested.Formatter{
 		HideKeys:        true,
-		FieldsOrder:     []string{"component", "service", "result"},
+		FieldsOrder:     []string{"component", "service"},
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 

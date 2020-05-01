@@ -1,9 +1,20 @@
 package constants
 
-type Auth struct {
+type Permission struct {
 	UserName   string `json:"user_name"`
 	TableName  string `json:"table_name"`
 	PrivateKey string `json:"caller_pk"`
+}
+
+type PermissionResponse struct {
+	Code    int
+	Message string
+}
+
+type PermissionVerifyResponse struct {
+	Code     int
+	Message  string
+	Response bool
 }
 
 type SQL struct {
@@ -24,15 +35,32 @@ type SQLQueryResponse struct {
 	Audit   string
 }
 
-type AuthResponse struct {
+type Token struct {
+	Amount     int64  `json:"amount"`
+	PrivateKey string `json:"caller_pk"`
+}
+
+type TokenTransfer struct {
+	Account    string `json:"user_name"`
+	Amount     int64  `json:"amount"`
+	PrivateKey string `json:"caller_pk"`
+}
+
+type TokenTransferResponse struct {
+	Code    int
+	Message string
+	Hash    string
+}
+
+type TokenTransferFailResponse struct {
 	Code    int
 	Message string
 }
 
-type AuthVerifyResponse struct {
-	Code     int
-	Message  string
-	Response bool
+type TokenBalanceResponse struct {
+	Code    int
+	Message string
+	Amount  int64
 }
 
 type ErrorResponse struct {
@@ -44,4 +72,16 @@ type ErrorResponseWithReason struct {
 	Code    int
 	Message string
 	Reason  string
+}
+
+type UserCreateResponse struct {
+	Code       int
+	Message    string
+	PrivateKey string
+	Account    string
+}
+
+type GeneralResponse struct {
+	Code    int
+	Message string
 }

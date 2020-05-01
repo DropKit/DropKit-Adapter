@@ -11,52 +11,53 @@ import (
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
-	"github.com/spf13/viper"
 )
 
-func AuthVerify(w http.ResponseWriter, r *http.Request) {
-	authorityAddr := viper.GetString(`DROPKIT.AUTHORITY`)
-
+func BurnToken(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		logger.WarnAPIAuthorityVerify(err)
+		logger.WarnAPIPaymentBurn(err)
 		services.NormalResponse(w, response.ResponseBadRequest())
 		return
 	}
 
-	var newStatement constants.Auth
+	if body != nil {
+		defer r.Body.Close()
+	}
+
+	var newStatement constants.Token
 	err = json.Unmarshal(body, &newStatement)
 	if err != nil {
-		logger.WarnAPIAuthorityVerify(err)
+		logger.WarnAPIPaymentBurn(err)
 		services.NormalResponse(w, response.ResponseBadRequest())
 		return
 	}
-	logger.InfoAPIAuthorityVerify(newStatement)
 
 	callerPriavteKey := newStatement.PrivateKey
-	checkUser := newStatement.UserName
-	checkTable := newStatement.TableName
+	amount := newStatement.Amount
 	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
 	if err != nil {
 		services.NormalResponse(w, response.ResponsePKConvertError())
 		return
 	}
 
-	callerAuthority, _ := services.VerifyAuthority(authorityAddr, callerPriavteKey, checkTable, callerAddress)
+	result, err := services.HasDropKitAdmin(callerPriavteKey, callerAddress)
+	if err != nil {
+		services.NormalResponse(w, response.ResponseInternalError())
+		return
+	}
 
-	switch callerAuthority {
+	switch result {
 	case true:
-		authority, _ := services.VerifyAuthority(authorityAddr, callerPriavteKey, checkTable, checkUser)
-
-		switch authority {
-		case true:
-			defer r.Body.Close()
-			services.NormalResponse(w, response.AuthVerifyResponse(true))
-		case false:
-			defer r.Body.Close()
-			services.NormalResponse(w, response.AuthVerifyResponse(false))
+		hash, err := services.MintToken(amount, callerPriavteKey, callerAddress)
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
+			return
 		}
+		services.NormalResponse(w, response.PaymentResponseOk(hash))
+		logger.InfoAPIPaymentBurn(newStatement)
 	case false:
 		services.NormalResponse(w, response.ResponseUnauthorized())
+		logger.WarnAPIPaymentBurnUnAuth(callerAddress.String())
 	}
 }

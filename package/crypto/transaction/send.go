@@ -16,7 +16,7 @@ func SendRawTransaction(receiverAddress string, txMessage string, txValue int64,
 
 	client, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "raw-transaction-sender").Error(err.Error())
 	}
 
 	rawTx := CreateRawTransaction(receiverAddress, txMessage, txValue, privatekeyHex)
@@ -28,7 +28,7 @@ func SendRawTransaction(receiverAddress string, txMessage string, txValue int64,
 
 	err = client.SendTransaction(context.Background(), tx)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "raw-transaction-sender").Error(err.Error())
 	}
 
 	return tx.Hash().Hex()

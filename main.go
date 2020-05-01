@@ -17,11 +17,16 @@ func init() {
 		logger.InternalLogger.WithField("component", "main").Error(err.Error())
 	}
 
-	services.DependencyServicesCheck()
+	service, err := services.DependencyServicesCheck()
+	if err != nil {
+		logger.FatalDependencyService(service, err)
+		return
+	}
+
+	logger.InfoDependencyService()
 }
 
 func main() {
 	router := routes.NewRouter()
-	http.ListenAndServe(":5000", router)
-
+	http.ListenAndServe(":"+viper.GetString(`DROPKIT.PORT`), router)
 }

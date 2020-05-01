@@ -17,9 +17,6 @@ import (
 )
 
 func SQLUpdate(w http.ResponseWriter, r *http.Request) {
-	metaTableAddress := viper.GetString(`DROPKIT.METATABLE`)
-	authorityAddr := viper.GetString(`DROPKIT.AUTHORITY`)
-
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIDatabaseUpdate(err)
@@ -38,7 +35,6 @@ func SQLUpdate(w http.ResponseWriter, r *http.Request) {
 		services.NormalResponse(w, response.ResponseBadRequest())
 		return
 	}
-	logger.InfoAPIDatabaseUpdate(newStatement)
 
 	sqlCommand := newStatement.Statement
 	callerPriavteKey := newStatement.PrivateKey
@@ -53,19 +49,39 @@ func SQLUpdate(w http.ResponseWriter, r *http.Request) {
 		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
 		return
 	}
-	tableAddress := services.GetMetaTable(tableName, metaTableAddress)
-	authority, _ := services.VerifyAuthority(authorityAddr, callerPriavteKey, tableName, callerAddress)
 
-	switch authority {
+	result, err := services.HasTableMaintainerRole(callerPriavteKey, callerAddress, tableName)
+	if err != nil {
+		services.NormalResponse(w, response.ResponseInternalError())
+		return
+	}
+
+	switch result {
 	case true:
+		tableAddress, err := services.GetTableMeta(tableName)
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
+			return
+		}
+
 		err = services.Exec(sqlCommand)
 		if err != nil {
 			services.NormalResponse(w, response.SQLResponseDatabaseError(err))
 			return
 		}
+
+		err = services.Consume(callerPriavteKey, callerAddress, viper.GetInt64(`PRICE.UPDATE`))
+		if err != nil {
+			services.NormalResponse(w, response.ResponseExceedsBalance())
+			return
+		}
+
 		aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
 		services.NormalResponse(w, response.SQLExecResponseOk(aduitTransactionHash))
+		logger.InfoAPIDatabaseUpdate(newStatement)
+
 	case false:
 		services.NormalResponse(w, response.ResponseUnauthorized())
+		logger.WarnAPIDatabaseUpdateUnAuth(callerAddress.String())
 	}
 }

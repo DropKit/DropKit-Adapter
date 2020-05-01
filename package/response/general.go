@@ -17,7 +17,13 @@ func ResponseBadRequest() interface{} {
 }
 
 func ResponsePKConvertError() interface{} {
-	response := constants.ErrorResponse{20103, "caller_pk format is not correct"}
+	response := constants.ErrorResponse{20103, "caller_pk format invalid"}
+
+	return response
+}
+
+func ResponseExceedsBalance() interface{} {
+	response := constants.ErrorResponse{20103, "Insufficient balance"}
 
 	return response
 }

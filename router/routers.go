@@ -3,8 +3,11 @@ package routes
 import (
 	"net/http"
 
-	auth "github.com/DropKit/DropKit-Adapter/controller/auth"
 	db "github.com/DropKit/DropKit-Adapter/controller/db"
+	health "github.com/DropKit/DropKit-Adapter/controller/health"
+	payment "github.com/DropKit/DropKit-Adapter/controller/payment"
+	permission "github.com/DropKit/DropKit-Adapter/controller/permission"
+	user "github.com/DropKit/DropKit-Adapter/controller/user"
 
 	"github.com/gorilla/mux"
 )
@@ -19,15 +22,33 @@ type Route struct {
 var routes []Route
 
 func init() {
-	register("POST", "/api/db/create", db.SQLCreate, nil)
-	register("POST", "/api/db/insert", db.SQLInsert, nil)
-	register("POST", "/api/db/select", db.SQLSelect, nil)
-	register("POST", "/api/db/update", db.SQLUpdate, nil)
-	register("POST", "/api/db/delete", db.SQLDelete, nil)
+	register("GET", "/health/ping", health.Ping, nil)
+	register("GET", "/health/dependency", health.DependencyCheck, nil)
 
-	register("POST", "/api/auth/grant", auth.AuthGrant, nil)
-	register("POST", "/api/auth/revoke", auth.AuthRevoke, nil)
-	register("POST", "/api/auth/verify", auth.AuthVerify, nil)
+	register("GET", "/user/create", user.CreateUser, nil)
+
+	register("POST", "/db/create", db.SQLCreate, nil)
+	register("POST", "/db/insert", db.SQLInsert, nil)
+	register("POST", "/db/select", db.SQLSelect, nil)
+	register("POST", "/db/update", db.SQLUpdate, nil)
+	register("POST", "/db/delete", db.SQLDelete, nil)
+
+	register("POST", "/permission/grant/admin", permission.GrantAdmin, nil)
+	register("POST", "/permission/grant/maintainer", permission.GrantMaintainer, nil)
+	register("POST", "/permission/grant/user", permission.GrantUser, nil)
+
+	register("POST", "/permission/revoke/admin", permission.RevokeAdmin, nil)
+	register("POST", "/permission/revoke/maintainer", permission.RevokeMaintainer, nil)
+	register("POST", "/permission/revoke/user", permission.RevokeUser, nil)
+
+	register("POST", "/permission/verify/admin", permission.VerifyAdmin, nil)
+	register("POST", "/permission/verify/maintainer", permission.VerifyMaintainer, nil)
+	register("POST", "/permission/verify/user", permission.VerifyUser, nil)
+
+	register("POST", "/payment/mint", payment.MintToken, nil)
+	register("POST", "/payment/burn", payment.BurnToken, nil)
+	register("POST", "/payment/transfer", payment.TransferToken, nil)
+	register("GET", "/payment/balance", payment.GetBalance, nil)
 }
 
 func NewRouter() *mux.Router {

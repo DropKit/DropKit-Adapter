@@ -11,7 +11,7 @@ import (
 func GenerateWallet() (string, string) {
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "account-creater").Error(err.Error())
 	}
 
 	privateKeyBytes := crypto.FromECDSA(privateKey)
@@ -19,7 +19,7 @@ func GenerateWallet() (string, string) {
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
+		logger.InternalLogger.WithField("component", "account-creater").Error(err.Error())
 	}
 
 	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
