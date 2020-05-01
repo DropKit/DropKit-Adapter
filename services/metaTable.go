@@ -15,7 +15,7 @@ import (
 	"github.com/DropKit/DropKit-Adapter/package/crypto/contracts/metaTable"
 )
 
-func AddMetaTable(tableName string, tableAddress string, tableAddressStorageContractAddress string, privatekeyHex string) {
+func AddMetaTable(tableName string, tableAddress string, metaTableAddress string, privatekeyHex string) {
 	quorumEndpoint := viper.GetString(`QUORUM.ENDPOINT`)
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
@@ -52,7 +52,7 @@ func AddMetaTable(tableName string, tableAddress string, tableAddressStorageCont
 	auth.GasLimit = uint64(300000)
 	auth.GasPrice = gasPrice
 
-	address := common.HexToAddress(tableAddressStorageContractAddress)
+	address := common.HexToAddress(metaTableAddress)
 
 	contractInstance, err := metaTable.NewMetaTable(address, quorumClient)
 	if err != nil {
@@ -65,7 +65,7 @@ func AddMetaTable(tableName string, tableAddress string, tableAddressStorageCont
 	}
 }
 
-func GetMetaTable(tableName string, tableAddressStorageContractAddress string) string {
+func GetMetaTable(tableName string, metaTableAddress string) string {
 	quorumEndpoint := viper.GetString(`QUORUM.ENDPOINT`)
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
@@ -73,7 +73,7 @@ func GetMetaTable(tableName string, tableAddressStorageContractAddress string) s
 		logger.InternalLogger.WithField("component", "internal").Error(err.Error())
 	}
 
-	address := common.HexToAddress(tableAddressStorageContractAddress)
+	address := common.HexToAddress(metaTableAddress)
 
 	contractInstance, err := metaTable.NewMetaTable(address, quorumClient)
 	if err != nil {
