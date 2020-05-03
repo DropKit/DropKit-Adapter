@@ -48,7 +48,7 @@ func init() {
 	register("POST", "/payment/mint", payment.MintToken, nil)
 	register("POST", "/payment/burn", payment.BurnToken, nil)
 	register("POST", "/payment/transfer", payment.TransferToken, nil)
-	register("GET", "/payment/balance", payment.GetBalance, nil)
+	register("POST", "/payment/balance", payment.GetBalance, nil)
 }
 
 func NewRouter() *mux.Router {

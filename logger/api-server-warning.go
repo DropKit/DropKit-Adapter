@@ -157,3 +157,7 @@ func WarnAPIPaymentTransferNotEnough(statement interface{}) {
 func WarnAPIPaymentBalance(statement interface{}) {
 	APIServerLogger.WithField("component", "api-server").WithFields(logrus.Fields{"command": "POST /payment/balance"}).Warn(statement)
 }
+
+func WarnAPIPaymentBalanceUnAuth(account string) {
+	APIServerLogger.WithField("component", "api-server").WithFields(logrus.Fields{"command": "POST /payment/balance"}).Warn("unauthorized user: " + account)
+}

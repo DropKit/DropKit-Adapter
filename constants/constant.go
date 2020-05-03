@@ -57,6 +57,11 @@ type TokenTransferFailResponse struct {
 	Message string
 }
 
+type TokenBalance struct {
+	PrivateKey string `json:"caller_pk"`
+	Account    string `json:"user_name"`
+}
+
 type TokenBalanceResponse struct {
 	Code    int
 	Message string

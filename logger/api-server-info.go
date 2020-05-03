@@ -91,6 +91,6 @@ func InfoAPIPaymentTransfer(statement interface{}) {
 	APIServerLogger.WithField("component", "api-server").WithFields(logrus.Fields{"command": "POST /payment/transfer"}).Info(statement)
 }
 
-func InfoAPIPaymentBalance(account string) {
-	APIServerLogger.WithField("component", "api-server").WithFields(logrus.Fields{"command": "POST /payment/balance"}).Info(account)
+func InfoAPIPaymentBalance(statement interface{}) {
+	APIServerLogger.WithField("component", "api-server").WithFields(logrus.Fields{"command": "POST /payment/balance"}).Info(statement)
 }
