@@ -7,6 +7,7 @@ import (
 	health "github.com/DropKit/DropKit-Adapter/controller/health"
 	payment "github.com/DropKit/DropKit-Adapter/controller/payment"
 	permission "github.com/DropKit/DropKit-Adapter/controller/permission"
+	role "github.com/DropKit/DropKit-Adapter/controller/role"
 	user "github.com/DropKit/DropKit-Adapter/controller/user"
 
 	"github.com/gorilla/mux"
@@ -49,6 +50,8 @@ func init() {
 	register("POST", "/payment/burn", payment.BurnToken, nil)
 	register("POST", "/payment/transfer", payment.TransferToken, nil)
 	register("POST", "/payment/balance", payment.GetBalance, nil)
+
+	register("POST", "/role/create", role.CreateColumnRole, nil)
 }
 
 func NewRouter() *mux.Router {

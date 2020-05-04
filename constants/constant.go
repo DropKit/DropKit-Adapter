@@ -1,9 +1,17 @@
 package constants
 
+type Role struct {
+	Columns     []string `json:"columns"`
+	ColumnsName string   `json:"role_name"`
+	PrivateKey  string   `json:"caller_pk"`
+	TableName   string   `json:"table_name"`
+}
+
 type Permission struct {
-	UserName   string `json:"user_name"`
-	TableName  string `json:"table_name"`
-	PrivateKey string `json:"caller_pk"`
+	UserName    string `json:"user_name"`
+	TableName   string `json:"table_name"`
+	PrivateKey  string `json:"caller_pk"`
+	ColumnsRole string `json:"column_role"`
 }
 
 type PermissionResponse struct {

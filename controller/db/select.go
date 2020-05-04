@@ -11,7 +11,9 @@ import (
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/transaction"
 	"github.com/DropKit/DropKit-Adapter/package/parser"
+	columns "github.com/DropKit/DropKit-Adapter/package/parser/columns"
 	"github.com/DropKit/DropKit-Adapter/package/response"
+	"github.com/DropKit/DropKit-Adapter/package/utils"
 	"github.com/DropKit/DropKit-Adapter/services"
 	"github.com/spf13/viper"
 )
@@ -50,6 +52,12 @@ func SQLSelect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	columnsNames, err := columns.GetSelectColumns(sqlCommand)
+	if err != nil {
+		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
+		return
+	}
+
 	result, err := services.HasTableUserRole(callerPriavteKey, callerAddress, tableName)
 	if err != nil {
 		services.NormalResponse(w, response.ResponseInternalError())
@@ -58,27 +66,40 @@ func SQLSelect(w http.ResponseWriter, r *http.Request) {
 
 	switch result {
 	case true:
-		tableAddress, err := services.GetTableMeta(tableName)
+		columnsCanSelect, err := services.GetColumnsRole(callerPriavteKey, callerAddress, tableName)
 		if err != nil {
 			services.NormalResponse(w, response.ResponseInternalError())
 			return
 		}
+		columnsAuth := utils.CompareColumns(columnsCanSelect, columnsNames)
 
-		metadata, err := services.Query(sqlCommand)
-		if err != nil {
-			services.NormalResponse(w, response.SQLResponseDatabaseError(err))
-			return
+		switch columnsAuth {
+		case true:
+			tableAddress, err := services.GetTableMeta(tableName)
+			if err != nil {
+				services.NormalResponse(w, response.ResponseInternalError())
+				return
+			}
+
+			metadata, err := services.Query(sqlCommand)
+			if err != nil {
+				services.NormalResponse(w, response.SQLResponseDatabaseError(err))
+				return
+			}
+
+			err = services.Consume(callerPriavteKey, callerAddress, viper.GetInt64(`PRICE.SELECT`))
+			if err != nil {
+				services.NormalResponse(w, response.ResponseExceedsBalance())
+				return
+			}
+
+			aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
+			services.NormalResponse(w, response.SQLQueryResponseOk(metadata, aduitTransactionHash))
+			logger.InfoAPIDatabaseSelect(newStatement)
+		case false:
+			services.NormalResponse(w, response.ResponseUnauthorized())
+			logger.WarnAPIDatabaseSelectUnAuth(callerAddress.String())
 		}
-
-		err = services.Consume(callerPriavteKey, callerAddress, viper.GetInt64(`PRICE.SELECT`))
-		if err != nil {
-			services.NormalResponse(w, response.ResponseExceedsBalance())
-			return
-		}
-
-		aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
-		services.NormalResponse(w, response.SQLQueryResponseOk(metadata, aduitTransactionHash))
-		logger.InfoAPIDatabaseSelect(newStatement)
 
 	case false:
 		services.NormalResponse(w, response.ResponseUnauthorized())

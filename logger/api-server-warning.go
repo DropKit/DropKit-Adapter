@@ -161,3 +161,13 @@ func WarnAPIPaymentBalance(statement interface{}) {
 func WarnAPIPaymentBalanceUnAuth(account string) {
 	APIServerLogger.WithField("component", "api-server").WithFields(logrus.Fields{"command": "POST /payment/balance"}).Warn("unauthorized user: " + account)
 }
+
+// role
+
+func WarnAPIRoleCreate(statement interface{}) {
+	APIServerLogger.WithField("component", "api-server").WithFields(logrus.Fields{"command": "POST /role/create"}).Warn(statement)
+}
+
+func WarnAPIRoleCreateUnAuth(account string) {
+	APIServerLogger.WithField("component", "api-server").WithFields(logrus.Fields{"command": "POST /role/create"}).Warn("unauthorized user: " + account)
+}

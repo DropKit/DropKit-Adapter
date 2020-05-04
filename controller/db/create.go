@@ -11,6 +11,7 @@ import (
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/transaction"
 	"github.com/DropKit/DropKit-Adapter/package/parser"
+	columns "github.com/DropKit/DropKit-Adapter/package/parser/columns"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
 	"github.com/spf13/viper"
@@ -50,6 +51,12 @@ func SQLCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	columnsNames, err := columns.GetCreateColumns(sqlCommand)
+	if err != nil {
+		services.NormalResponse(w, response.ResponseInternalError())
+		return
+	}
+
 	result, err := services.HasDropKitAdmin(callerPriavteKey, callerAddress)
 	if err != nil {
 		services.NormalResponse(w, response.ResponseInternalError())
@@ -73,6 +80,12 @@ func SQLCreate(w http.ResponseWriter, r *http.Request) {
 		err = services.Exec(sqlCommand)
 		if err != nil {
 			services.NormalResponse(w, response.SQLResponseDatabaseError(err))
+			return
+		}
+
+		err = services.AddColumnsRole(callerPriavteKey, callerAddress, tableName, columnsNames, tableName+"ColumnsAdmin")
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
 			return
 		}
 

@@ -56,6 +56,13 @@ func GrantAdmin(w http.ResponseWriter, r *http.Request) {
 			services.NormalResponse(w, response.ResponseInternalError())
 			return
 		}
+
+		err = services.GrantColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, tableName+"ColumnsAdmin")
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
+			return
+		}
+
 		services.NormalResponse(w, response.PermissionResponseOk())
 		logger.InfoAPIPermissionGrantAdmin(newStatement)
 	case false:
@@ -87,6 +94,7 @@ func GrantMaintainer(w http.ResponseWriter, r *http.Request) {
 	callerPriavteKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
+	columnsRole := newStatement.ColumnsRole
 	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
 	if err != nil {
 		services.NormalResponse(w, response.ResponsePKConvertError())
@@ -106,6 +114,13 @@ func GrantMaintainer(w http.ResponseWriter, r *http.Request) {
 			services.NormalResponse(w, response.ResponseInternalError())
 			return
 		}
+
+		err = services.GrantColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, columnsRole)
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
+			return
+		}
+
 		services.NormalResponse(w, response.PermissionResponseOk())
 		logger.InfoAPIPermissionGrantMaintainer(newStatement)
 
@@ -139,6 +154,7 @@ func GrantUser(w http.ResponseWriter, r *http.Request) {
 	callerPriavteKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
+	columnsRole := newStatement.ColumnsRole
 	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
 	if err != nil {
 		services.NormalResponse(w, response.ResponsePKConvertError())
@@ -158,6 +174,13 @@ func GrantUser(w http.ResponseWriter, r *http.Request) {
 			services.NormalResponse(w, response.ResponseInternalError())
 			return
 		}
+
+		err = services.GrantColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, columnsRole)
+		if err != nil {
+			services.NormalResponse(w, response.ResponseInternalError())
+			return
+		}
+
 		services.NormalResponse(w, response.PermissionResponseOk())
 		logger.InfoAPIPermissionGrantUser(newStatement)
 

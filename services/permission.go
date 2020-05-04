@@ -188,7 +188,7 @@ func HasTableAdminRole(privatekeyHex string, accountAddress common.Address, tabl
 	}
 	adminRole, _, _ := utils.ToRoleName(tableName)
 
-	result, err := contractInstance.HasCreateTable(nil, accountAddress, adminRole)
+	result, err := contractInstance.HasTableAdminRole(nil, accountAddress, adminRole)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "HasTableAdminRole").Error(err.Error())
 		return false, err
@@ -205,7 +205,7 @@ func HasTableMaintainerRole(privatekeyHex string, accountAddress common.Address,
 	}
 	_, maintainerRole, _ := utils.ToRoleName(tableName)
 
-	result, err := contractInstance.HasEditTable(nil, accountAddress, maintainerRole)
+	result, err := contractInstance.HasTableMaintainerRole(nil, accountAddress, maintainerRole)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "HasTableAdminRole").Error(err.Error())
 		return false, err
@@ -222,7 +222,7 @@ func HasTableUserRole(privatekeyHex string, accountAddress common.Address, table
 	}
 	_, _, userRole := utils.ToRoleName(tableName)
 
-	result, err := contractInstance.HasReadTable(nil, accountAddress, userRole)
+	result, err := contractInstance.HasTableUserRole(nil, accountAddress, userRole)
 	if err != nil {
 		logger.InternalLogger.WithField("component", "HasTableAdminRole").Error(err.Error())
 		return false, err
