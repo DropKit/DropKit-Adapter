@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func VerifyAdmin(w http.ResponseWriter, r *http.Request) {
+func VerifyTableOwner(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIPermissionVerifyAdmin(err)
@@ -73,7 +73,7 @@ func VerifyAdmin(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func VerifyMaintainer(w http.ResponseWriter, r *http.Request) {
+func VerifyTableMaintainer(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIPermissionVerifyMaintainer(err)
@@ -132,7 +132,7 @@ func VerifyMaintainer(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func VerifyUser(w http.ResponseWriter, r *http.Request) {
+func TableViewer(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIPermissionVerifyUser(err)

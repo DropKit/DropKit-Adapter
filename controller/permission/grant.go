@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func GrantAdmin(w http.ResponseWriter, r *http.Request) {
+func GrantTableOwner(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		services.NormalResponse(w, response.ResponseBadRequest())
@@ -71,7 +71,7 @@ func GrantAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GrantMaintainer(w http.ResponseWriter, r *http.Request) {
+func GrantTableMaintainer(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		services.NormalResponse(w, response.ResponseBadRequest())
@@ -131,7 +131,7 @@ func GrantMaintainer(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GrantUser(w http.ResponseWriter, r *http.Request) {
+func GrantTableViewer(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		services.NormalResponse(w, response.ResponseBadRequest())

@@ -13,7 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func GetBalance(w http.ResponseWriter, r *http.Request) {
+func GetAccountBalance(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIPaymentBalance(err)
@@ -42,7 +42,7 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 
 	switch balanceAccount {
 	case "":
-		balance, err := services.GetBalance(callerAddress)
+		balance, err := services.GetAccountBalance(callerAddress)
 		if err != nil {
 			services.NormalResponse(w, response.ResponseInternalError())
 			return
@@ -59,7 +59,7 @@ func GetBalance(w http.ResponseWriter, r *http.Request) {
 
 		switch result {
 		case true:
-			balance, err := services.GetBalance(common.HexToAddress(balanceAccount))
+			balance, err := services.GetAccountBalance(common.HexToAddress(balanceAccount))
 			if err != nil {
 				services.NormalResponse(w, response.ResponseInternalError())
 				return

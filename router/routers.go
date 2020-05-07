@@ -23,33 +23,34 @@ type Route struct {
 var routes []Route
 
 func init() {
-	register("GET", "/health/ping", health.Ping, nil)
-	register("GET", "/health/dependency", health.DependencyCheck, nil)
+	// Todo: Merge two service into one, just check the whole services.
+	register("GET", "/health/ping", health.PerformHealthCheck, nil)
+	register("GET", "/health/dependency", health.CheckDependencyServices, nil)
 
-	register("GET", "/user/create", user.CreateUser, nil)
+	register("GET", "/user/create", user.GenerateRandomAccount, nil)
 
-	register("POST", "/db/create", db.SQLCreate, nil)
-	register("POST", "/db/insert", db.SQLInsert, nil)
-	register("POST", "/db/select", db.SQLSelect, nil)
-	register("POST", "/db/update", db.SQLUpdate, nil)
-	register("POST", "/db/delete", db.SQLDelete, nil)
+	register("POST", "/db/create", db.HandleDBCreation, nil)
+	register("POST", "/db/insert", db.HandleDBInsertion, nil)
+	register("POST", "/db/select", db.HandleDBSelection, nil)
+	register("POST", "/db/update", db.HandleDBUpdate, nil)
+	register("POST", "/db/delete", db.HandleDBDeletion, nil)
 
-	register("POST", "/permission/grant/admin", permission.GrantAdmin, nil)
-	register("POST", "/permission/grant/maintainer", permission.GrantMaintainer, nil)
-	register("POST", "/permission/grant/user", permission.GrantUser, nil)
+	register("POST", "/permission/grant/table/owner", permission.GrantTableOwner, nil)
+	register("POST", "/permission/grant/table/maintainer", permission.GrantTableMaintainer, nil)
+	register("POST", "/permission/grant/table/viewer", permission.GrantTableViewer, nil)
 
-	register("POST", "/permission/revoke/admin", permission.RevokeAdmin, nil)
-	register("POST", "/permission/revoke/maintainer", permission.RevokeMaintainer, nil)
-	register("POST", "/permission/revoke/user", permission.RevokeUser, nil)
+	register("POST", "/permission/revoke/table/owner", permission.RevokeTableOwner, nil)
+	register("POST", "/permission/revoke/table/maintainer", permission.RevokeTableMaintainer, nil)
+	register("POST", "/permission/revoke/table/viewer", permission.RevokeTableViewer, nil)
 
-	register("POST", "/permission/verify/admin", permission.VerifyAdmin, nil)
-	register("POST", "/permission/verify/maintainer", permission.VerifyMaintainer, nil)
-	register("POST", "/permission/verify/user", permission.VerifyUser, nil)
+	register("POST", "/permission/verify/table/owner", permission.VerifyTableOwner, nil)
+	register("POST", "/permission/verify/table/maintainer", permission.VerifyTableMaintainer, nil)
+	register("POST", "/permission/verify/table/viewer", permission.TableViewer, nil)
 
 	register("POST", "/payment/mint", payment.MintToken, nil)
 	register("POST", "/payment/burn", payment.BurnToken, nil)
 	register("POST", "/payment/transfer", payment.TransferToken, nil)
-	register("POST", "/payment/balance", payment.GetBalance, nil)
+	register("POST", "/payment/balance", payment.GetAccountBalance, nil)
 
 	register("POST", "/role/create", role.CreateColumnRole, nil)
 }

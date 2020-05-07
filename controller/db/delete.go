@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SQLDelete(w http.ResponseWriter, r *http.Request) {
+func HandleDBDeletion(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIDatabaseDelete(err)

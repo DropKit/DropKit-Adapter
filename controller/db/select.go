@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SQLSelect(w http.ResponseWriter, r *http.Request) {
+func HandleDBSelection(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIDatabaseUpdate(err)

@@ -8,7 +8,7 @@ import (
 	"github.com/DropKit/DropKit-Adapter/services"
 )
 
-func DependencyCheck(w http.ResponseWriter, r *http.Request) {
+func CheckDependencyServices(w http.ResponseWriter, r *http.Request) {
 	service, err := services.DependencyServicesCheck()
 	if err != nil {
 		logger.ErrorDependencyService(service, err)

@@ -73,16 +73,16 @@ func Consume(privatekeyHex string, account common.Address, amount int64) error {
 	return nil
 }
 
-func GetBalance(balanceAccount common.Address) (*big.Int, error) {
+func GetAccountBalance(balanceAccount common.Address) (*big.Int, error) {
 	contractInstance, err := CreateDropKitInstance()
 	if err != nil {
-		logger.InternalLogger.WithField("component", "GetBalance").Error(err.Error())
+		logger.InternalLogger.WithField("component", "GetAccountBalance").Error(err.Error())
 		return big.NewInt(0), err
 	}
 
 	amount, err := contractInstance.BalanceOf(nil, balanceAccount)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "GetBalance").Error(err.Error())
+		logger.InternalLogger.WithField("component", "GetAccountBalance").Error(err.Error())
 		return big.NewInt(0), err
 	}
 

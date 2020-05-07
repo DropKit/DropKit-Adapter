@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func RevokeAdmin(w http.ResponseWriter, r *http.Request) {
+func RevokeTableOwner(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIPermissionRevokeAdmin(err)
@@ -73,7 +73,7 @@ func RevokeAdmin(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func RevokeMaintainer(w http.ResponseWriter, r *http.Request) {
+func RevokeTableMaintainer(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIPermissionRevokeMaintainer(err)
@@ -133,7 +133,7 @@ func RevokeMaintainer(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func RevokeUser(w http.ResponseWriter, r *http.Request) {
+func RevokeTableViewer(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIPermissionRevokeUser(err)

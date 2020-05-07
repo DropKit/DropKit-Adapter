@@ -8,7 +8,7 @@ import (
 	"github.com/DropKit/DropKit-Adapter/services"
 )
 
-func Ping(w http.ResponseWriter, r *http.Request) {
+func PerformHealthCheck(w http.ResponseWriter, r *http.Request) {
 	services.NormalResponse(w, response.ResponseServerOk())
 	logger.InfoAPIPing()
 }

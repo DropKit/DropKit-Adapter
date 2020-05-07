@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func SQLCreate(w http.ResponseWriter, r *http.Request) {
+func HandleDBCreation(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		logger.WarnAPIDatabaseCreate(err)

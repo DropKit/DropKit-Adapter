@@ -9,7 +9,7 @@ import (
 	"github.com/DropKit/DropKit-Adapter/services"
 )
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func GenerateRandomAccount(w http.ResponseWriter, r *http.Request) {
 	newPrivateKey, newAddress := account.GenerateWallet()
 
 	services.NormalResponse(w, response.ResponseNewUser(newPrivateKey, newAddress))
