@@ -78,5 +78,7 @@ func Query(command string) (interface{}, error) {
 	}
 	json.Marshal(tableData)
 
+	db.Close()
+
 	return tableData, nil
 }
