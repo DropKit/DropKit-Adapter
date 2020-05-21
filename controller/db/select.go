@@ -2,10 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"io/ioutil"
-
-	"net/http"
-
 	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
@@ -16,7 +12,29 @@ import (
 	"github.com/DropKit/DropKit-Adapter/package/utils"
 	"github.com/DropKit/DropKit-Adapter/services"
 	"github.com/spf13/viper"
+	"io/ioutil"
+	"net/http"
+	"strings"
 )
+
+func checkSelectAll(sqlCommand string, columnsCanSelect []string) string {
+	var idx int = -1
+	for i, v := range sqlCommand {
+		if v == '*' {
+			idx = i
+			break
+		}
+	}
+	if idx == -1 {
+		return sqlCommand
+	}
+
+	sqlSlice := []byte(sqlCommand[0:idx])
+	columnsStr := strings.Join(columnsCanSelect, ",")
+	sqlSlice = append(sqlSlice, []byte(columnsStr)...)
+	sqlSlice = append(sqlSlice, []byte(sqlCommand[idx+1:])...)
+	return string(sqlSlice)
+}
 
 func HandleDBSelection(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
@@ -39,6 +57,7 @@ func HandleDBSelection(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sqlCommand := newStatement.Statement
+
 	callerPriavteKey := newStatement.PrivateKey
 	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
 	if err != nil {
@@ -52,12 +71,6 @@ func HandleDBSelection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	columnsNames, err := columns.GetSelectColumns(sqlCommand)
-	if err != nil {
-		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
-		return
-	}
-
 	result, err := services.HasTableUserRole(callerPriavteKey, callerAddress, tableName)
 	if err != nil {
 		services.NormalResponse(w, response.ResponseInternalError())
@@ -66,11 +79,22 @@ func HandleDBSelection(w http.ResponseWriter, r *http.Request) {
 
 	switch result {
 	case true:
+
 		columnsCanSelect, err := services.GetColumnsRole(callerPriavteKey, callerAddress, tableName)
+
 		if err != nil {
 			services.NormalResponse(w, response.ResponseInternalError())
 			return
 		}
+
+		sqlCommand = checkSelectAll(sqlCommand, columnsCanSelect)
+
+		columnsNames, err := columns.GetSelectColumns(sqlCommand)
+		if err != nil {
+			services.NormalResponse(w, response.SQLResponseBadSQLStatement())
+			return
+		}
+
 		columnsAuth := utils.CompareColumns(columnsCanSelect, columnsNames)
 
 		switch columnsAuth {
