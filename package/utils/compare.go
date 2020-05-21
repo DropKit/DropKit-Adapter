@@ -1,4 +1,5 @@
 package utils
+
 import (
 	"github.com/wxnacy/wgo/arrays"
 )
