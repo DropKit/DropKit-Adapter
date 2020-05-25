@@ -11,8 +11,10 @@ func TestGetInsertColumns(t *testing.T) {
 		sqlCommand    string
 		expectColumns []string
 	}{
-		{"Case", "INSERT INTO t (QWERTYUIOPASDFGHJKLZXCVBNM, qwertyuiopasdfghjklzxcvbnm) VALUES(`aaa`,`bbb`)",
+		{"DoubleQuoted", "INSERT INTO t (\"QWERTYUIOPASDFGHJKLZXCVBNM\", \"qwertyuiopasdfghjklzxcvbnm\") VALUES(`aaa`,`bbb`)",
 			[]string{"QWERTYUIOPASDFGHJKLZXCVBNM", "qwertyuiopasdfghjklzxcvbnm"}},
+		{"NoQuoted", "INSERT INTO t (QWERTYUIOPASDFGHJKLZXCVBNM, qwertyuiopasdfghjklzxcvbnm) VALUES(`aaa`,`bbb`)",
+			[]string{"qwertyuiopasdfghjklzxcvbnm", "qwertyuiopasdfghjklzxcvbnm"}},
 		{"Number", "INSERT INTO t (num1234567890) VALUES (1)", []string{"num1234567890"}},
 	}
 

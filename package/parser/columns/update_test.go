@@ -11,8 +11,10 @@ func TestGetUpdateColumns(t *testing.T) {
 		sqlCommand    string
 		expectColumns []string
 	}{
-		{"Case", "UPDATE t set QWERTYUIOPASDFGHJKLZXCVBNM = `ABC` , qwertyuiopasdfghjklzxcvbnm = `abc` WHERE id = 1",
+		{"DoubleQuoted", "UPDATE t set \"QWERTYUIOPASDFGHJKLZXCVBNM\" = `ABC` , \"qwertyuiopasdfghjklzxcvbnm\" = `abc` WHERE id = 1",
 			[]string{"QWERTYUIOPASDFGHJKLZXCVBNM", "qwertyuiopasdfghjklzxcvbnm"}},
+		{"NoQuoted", "UPDATE t set QWERTYUIOPASDFGHJKLZXCVBNM = `ABC` , qwertyuiopasdfghjklzxcvbnm = `abc` WHERE id = 1",
+			[]string{"qwertyuiopasdfghjklzxcvbnm", "qwertyuiopasdfghjklzxcvbnm"}},
 		{"Number", "UPDATE t set num1234567890 = -1 WHERE id = 1", []string{"num1234567890"}},
 	}
 

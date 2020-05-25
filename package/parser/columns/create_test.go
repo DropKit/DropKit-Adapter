@@ -11,8 +11,10 @@ func TestGetCreateColumns(t *testing.T) {
 		sqlCommand    string
 		expectColumns []string
 	}{
-		{"Case", "CREATE TABLE t (QWERTYUIOPASDFGHJKLZXCVBNM INT PRIMARY KEY, qwertyuiopasdfghjklzxcvbnm INT);",
+		{"DoubleQuoted", "CREATE TABLE t (\"QWERTYUIOPASDFGHJKLZXCVBNM\" INT PRIMARY KEY, \"qwertyuiopasdfghjklzxcvbnm\" INT);",
 			[]string{"QWERTYUIOPASDFGHJKLZXCVBNM", "qwertyuiopasdfghjklzxcvbnm"}},
+		{"NoQuoted", "CREATE TABLE t (QWERTYUIOPASDFGHJKLZXCVBNM INT PRIMARY KEY, qwertyuiopasdfghjklzxcvbnm INT);",
+			[]string{"qwertyuiopasdfghjklzxcvbnm", "qwertyuiopasdfghjklzxcvbnm"}},
 		{"Number", "CREATE TABLE t (num1234567890 INT PRIMARY KEY);", []string{"num1234567890"}},
 	}
 

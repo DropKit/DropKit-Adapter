@@ -12,8 +12,10 @@ func TestGetSelectColumns(t *testing.T) {
 		expectColumns []string
 	}{
 		{"Asterisk", "SELECT * FROM t WHERE id = 1", []string{""}},
-		{"Case", "SELECT QWERTYUIOPASDFGHJKLZXCVBNM, qwertyuiopasdfghjklzxcvbnm FROM t WHERE id = 1",
+		{"DoubleQuoted", "SELECT \"QWERTYUIOPASDFGHJKLZXCVBNM\", \"qwertyuiopasdfghjklzxcvbnm\" FROM t WHERE id = 1",
 			[]string{"QWERTYUIOPASDFGHJKLZXCVBNM", "qwertyuiopasdfghjklzxcvbnm"}},
+		{"NoQuoted", "SELECT QWERTYUIOPASDFGHJKLZXCVBNM, qwertyuiopasdfghjklzxcvbnm FROM t WHERE id = 1",
+			[]string{"qwertyuiopasdfghjklzxcvbnm", "qwertyuiopasdfghjklzxcvbnm"}},
 		{"Number", "SELECT num1234567890 FROM t WHERE id = 1", []string{"num1234567890"}},
 	}
 
