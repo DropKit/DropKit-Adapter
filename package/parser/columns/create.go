@@ -38,7 +38,7 @@ func GetCreateColumns(sqlCommand string) ([]string, error) {
 	json.Unmarshal(statement, &newStatement)
 	for i := 0; i < len(newStatement.RawStmt.Stmt.CreateStmt.TableElts); i++ {
 		statementString, _ := json.Marshal(newStatement.RawStmt.Stmt.CreateStmt.TableElts[i].Col.Name)
-		columnNames = append(columnNames, string(statementString))
+		columnNames = append(columnNames, string(statementString[1:len(statementString)-1]))
 	}
 
 	return columnNames, nil

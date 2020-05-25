@@ -49,7 +49,7 @@ func GetSelectColumns(sqlCommand string) ([]string, error) {
 	json.Unmarshal(statement, &newStatement)
 	for i := 0; i < len(newStatement.RawStmt.Stmt.SelectStmt.TargetList); i++ {
 		statementString, _ := json.Marshal(newStatement.RawStmt.Stmt.SelectStmt.TargetList[i].ResTarget.Val.ColumnRef.Fields[0].Col.Name)
-		columnNames = append(columnNames, string(statementString))
+		columnNames = append(columnNames, string(statementString[1:len(statementString)-1]))
 	}
 
 	return columnNames, nil
