@@ -2,16 +2,13 @@ package controller
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"strconv"
-
-	"net/http"
-
 	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
+	"io/ioutil"
+	"net/http"
 )
 
 func CreateColumnRole(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +44,7 @@ func CreateColumnRole(w http.ResponseWriter, r *http.Request) {
 	columnsList := []string{}
 
 	for _, column := range columns {
-		columnsList = append(columnsList, strconv.Quote(column))
+		columnsList = append(columnsList, column)
 	}
 
 	result, err := services.HasTableMaintainerRole(callerPriavteKey, callerAddress, tableName)
