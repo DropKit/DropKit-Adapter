@@ -20,4 +20,5 @@ matrix:
         - npm install
       script:
         - ganache-cli &
-        - cd contract/ && truffle test
+        - cd contract/ && truffle test && cd ..
+        - cd tests/ && npm test
