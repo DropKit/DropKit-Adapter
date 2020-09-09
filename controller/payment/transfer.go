@@ -1,54 +1,38 @@
-package controller
+package payment
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"net/http"
 
-	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/gin-gonic/gin"
 )
 
-func TransferToken(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIPaymentTransfer(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func TransferToken(c *gin.Context) {
+	var newStatement tokenTransfer
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.TokenTransfer
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		services.NormalResponse(w, response.ResponseBadRequest())
-		logger.WarnAPIPaymentTransfer(err)
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	amount := newStatement.Amount
 	to := newStatement.Account
 
-	hash, err := services.Transfer(callerPriavteKey, common.HexToAddress(to), amount)
+	hash, err := services.Transfer(callerPrivateKey, common.HexToAddress(to), amount)
 	if err != nil {
 		if err.Error() == "-1" {
-			services.NormalResponse(w, response.PaymentResponseNotEnough())
+			c.JSON(http.StatusOK, tokenTransferFailResponse{20401, "not enough balance"})
 			logger.WarnAPIPaymentTransferNotEnough(newStatement)
 			return
 		}
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		logger.WarnAPIPaymentTransfer(err)
 		return
 	}
 
-	services.NormalResponse(w, response.PaymentResponseOk(hash))
+	c.JSON(http.StatusOK, tokenTransferResponse{0, "Ok", hash})
 	logger.InfoAPIPaymentTransfer(newStatement)
 }

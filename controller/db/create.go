@@ -1,12 +1,9 @@
-package controller
+package db
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"net/http"
+	"strings"
 
-	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/transaction"
@@ -14,93 +11,81 @@ import (
 	columns "github.com/DropKit/DropKit-Adapter/package/parser/columns"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
-func HandleDBCreation(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIDatabaseCreate(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.SQL
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIDatabaseCreate(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func HandleDBCreation(c *gin.Context) {
+	var newStatement sql
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
 	sqlCommand := newStatement.Statement
-	callerPriavteKey := newStatement.PrivateKey
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerPrivateKey := newStatement.PrivateKey
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
 	tableName, err := parser.GetTableName(sqlCommand)
 	if err != nil {
-		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
+		c.JSON(http.StatusOK, response.ErrorResponse{Code: 20202, Message: "Bad SQL statement"})
 		return
 	}
 
 	columnsNames, err := columns.GetCreateColumns(sqlCommand)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
-	result, err := services.HasDropKitAdmin(callerPriavteKey, callerAddress)
+	result, err := services.HasDropKitAdmin(callerPrivateKey, callerAddress)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		tableAddress, err := services.AddTableMeta(tableName, callerPriavteKey)
+		tableAddress, err := services.AddTableMeta(tableName, callerPrivateKey)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		err = services.AddTableAdmin(callerPriavteKey, callerAddress, tableName)
+		err = services.AddTableAdmin(callerPrivateKey, callerAddress, tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
 		err = services.Exec(sqlCommand)
 		if err != nil {
-			services.NormalResponse(w, response.SQLResponseDatabaseError(err))
+			c.JSON(http.StatusOK, response.ErrorResponseWithReason{Code: 20201, Message: "Database error", Reason: (strings.Split(err.Error(), "pq: "))[1]})
 			return
 		}
 
-		err = services.AddColumnsRole(callerPriavteKey, callerAddress, tableName, columnsNames, tableName+"ColumnsAdmin")
+		err = services.AddColumnsRole(callerPrivateKey, callerAddress, tableName, columnsNames, tableName+"ColumnsAdmin")
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		err = services.Consume(callerPriavteKey, callerAddress, viper.GetInt64(`PRICE.CREATE`))
+		err = services.Consume(callerPrivateKey, callerAddress, viper.GetInt64(`PRICE.CREATE`))
 		if err != nil {
-			services.NormalResponse(w, response.ResponseExceedsBalance())
+			c.JSON(http.StatusOK, response.ResponseExceedsBalance())
 			return
 		}
 
-		aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
-		services.NormalResponse(w, response.SQLExecResponseOk(aduitTransactionHash))
+		auditTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPrivateKey)
+		c.JSON(http.StatusOK, sqlExecResponse{0, "Ok", auditTransactionHash})
 		logger.InfoAPIDatabaseCreate(newStatement)
 
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIDatabaseCreateUnAuth(callerAddress.String())
 	}
 }

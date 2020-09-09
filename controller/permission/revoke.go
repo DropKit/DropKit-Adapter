@@ -1,193 +1,151 @@
-package controller
+package permission
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"net/http"
 
-	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/gin-gonic/gin"
 )
 
-func RevokeTableOwner(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIPermissionRevokeAdmin(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func RevokeTableOwner(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionRevokeAdmin(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableAdminRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableAdminRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		err = services.RemoveTableAdmin(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		err = services.RemoveTableAdmin(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		err = services.RevokeColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, tableName+"ColumnsAdmin")
+		err = services.RevokeColumnsRole(callerPrivateKey, common.HexToAddress(grantUser), tableName, tableName+"ColumnsAdmin")
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		services.NormalResponse(w, response.PermissionResponseOk())
+		c.JSON(http.StatusOK, permissionResponse{0, "Ok"})
 		logger.InfoAPIPermissionRevokeAdmin(newStatement)
 
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionRevokeAdminUnAuth(callerAddress.String())
 	}
 
 }
 
-func RevokeTableMaintainer(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIPermissionRevokeMaintainer(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func RevokeTableMaintainer(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionRevokeMaintainer(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
 	columnsRole := newStatement.ColumnsRole
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableAdminRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableAdminRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		err = services.RemoveTableMaintainer(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		err = services.RemoveTableMaintainer(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		err = services.RevokeColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, columnsRole)
+		err = services.RevokeColumnsRole(callerPrivateKey, common.HexToAddress(grantUser), tableName, columnsRole)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		services.NormalResponse(w, response.PermissionResponseOk())
+		c.JSON(http.StatusOK, permissionResponse{0, "Ok"})
 		logger.InfoAPIPermissionRevokeMaintainer(newStatement)
 
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionRevokeMaintainerUnAuth(callerAddress.String())
 	}
 
 }
 
-func RevokeTableViewer(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIPermissionRevokeUser(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func RevokeTableViewer(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionRevokeUser(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
 	columnsRole := newStatement.ColumnsRole
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableMaintainerRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableMaintainerRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		err = services.RemoveTableUser(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		err = services.RemoveTableUser(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		err = services.RevokeColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, columnsRole)
+		err = services.RevokeColumnsRole(callerPrivateKey, common.HexToAddress(grantUser), tableName, columnsRole)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		services.NormalResponse(w, response.PermissionResponseOk())
+		c.JSON(http.StatusOK, permissionResponse{0, "Ok"})
 		logger.InfoAPIPermissionRevokeUser(newStatement)
 
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionRevokeUserUnAuth(callerAddress.String())
 	}
 

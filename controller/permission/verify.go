@@ -1,191 +1,149 @@
-package controller
+package permission
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"net/http"
 
-	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/gin-gonic/gin"
 )
 
-func VerifyTableOwner(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIPermissionVerifyAdmin(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func VerifyTableOwner(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionVerifyAdmin(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableAdminRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableAdminRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		authority, err := services.HasTableAdminRole(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		authority, err := services.HasTableAdminRole(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
 		switch authority {
 		case true:
-			services.NormalResponse(w, response.PermissionVerifyResponse(true))
+			c.JSON(http.StatusOK, permissionVerifyResponse{0, "Ok", true})
 			logger.InfoAPIPermissionVerifyAdmin(newStatement)
 
 		case false:
-			services.NormalResponse(w, response.PermissionVerifyResponse(false))
+			c.JSON(http.StatusOK, permissionVerifyResponse{0, "Ok", false})
 			logger.InfoAPIPermissionVerifyAdmin(newStatement)
 		}
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionVerifyAdminUnAuth(callerAddress.String())
 	}
 
 }
 
-func VerifyTableMaintainer(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIPermissionVerifyMaintainer(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func VerifyTableMaintainer(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionVerifyMaintainer(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableAdminRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableAdminRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		authority, err := services.HasTableMaintainerRole(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		authority, err := services.HasTableMaintainerRole(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
 		switch authority {
 		case true:
-			services.NormalResponse(w, response.PermissionVerifyResponse(true))
+			c.JSON(http.StatusOK, permissionVerifyResponse{0, "Ok", true})
 			logger.InfoAPIPermissionVerifyMaintainer(newStatement)
 
 		case false:
-			services.NormalResponse(w, response.PermissionVerifyResponse(false))
+			c.JSON(http.StatusOK, permissionVerifyResponse{0, "Ok", false})
 			logger.InfoAPIPermissionVerifyMaintainer(newStatement)
 		}
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionRevokeMaintainerUnAuth(callerAddress.String())
 	}
 
 }
 
-func TableViewer(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIPermissionVerifyUser(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func TableViewer(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionVerifyUser(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableMaintainerRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableMaintainerRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		authority, err := services.HasTableUserRole(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		authority, err := services.HasTableUserRole(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
 		switch authority {
 		case true:
-			services.NormalResponse(w, response.PermissionVerifyResponse(true))
+			c.JSON(http.StatusOK, permissionVerifyResponse{0, "Ok", true})
 			logger.InfoAPIPermissionVerifyUser(newStatement)
 
 		case false:
-			services.NormalResponse(w, response.PermissionVerifyResponse(false))
+			c.JSON(http.StatusOK, permissionVerifyResponse{0, "Ok", false})
 			logger.InfoAPIPermissionVerifyUser(newStatement)
 		}
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionVerifyUserUnAuth(callerAddress.String())
 	}
 

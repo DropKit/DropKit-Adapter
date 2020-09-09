@@ -1,191 +1,149 @@
-package controller
+package permission
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"net/http"
 
-	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/gin-gonic/gin"
 )
 
-func GrantTableOwner(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		services.NormalResponse(w, response.ResponseBadRequest())
-		logger.WarnAPIPermissionGrantAdmin(err)
+func GrantTableOwner(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionGrantAdmin(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableAdminRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableAdminRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		err = services.AddTableAdmin(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		err = services.AddTableAdmin(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		err = services.GrantColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, tableName+"ColumnsAdmin")
+		err = services.GrantColumnsRole(callerPrivateKey, common.HexToAddress(grantUser), tableName, tableName+"ColumnsAdmin")
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		services.NormalResponse(w, response.PermissionResponseOk())
+		c.JSON(http.StatusOK, permissionResponse{0, "Ok"})
 		logger.InfoAPIPermissionGrantAdmin(newStatement)
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionGrantAdminUnAuth(callerAddress.String())
 	}
 }
 
-func GrantTableMaintainer(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		services.NormalResponse(w, response.ResponseBadRequest())
-		logger.WarnAPIPermissionGrantMaintainer(err)
+func GrantTableMaintainer(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionGrantMaintainer(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
 	columnsRole := newStatement.ColumnsRole
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableAdminRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableAdminRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		err = services.AddTableMaintainer(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		err = services.AddTableMaintainer(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		err = services.GrantColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, columnsRole)
+		err = services.GrantColumnsRole(callerPrivateKey, common.HexToAddress(grantUser), tableName, columnsRole)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		services.NormalResponse(w, response.PermissionResponseOk())
+		c.JSON(http.StatusOK, permissionResponse{0, "Ok"})
 		logger.InfoAPIPermissionGrantMaintainer(newStatement)
 
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionGrantMaintainerUnAuth(callerAddress.String())
 	}
 
 }
 
-func GrantTableViewer(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		services.NormalResponse(w, response.ResponseBadRequest())
-		logger.WarnAPIPermissionGrantUser(err)
+func GrantTableViewer(c *gin.Context) {
+	var newStatement permission
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Permission
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIPermissionGrantUser(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	callerPriavteKey := newStatement.PrivateKey
+	callerPrivateKey := newStatement.PrivateKey
 	grantUser := newStatement.UserName
 	tableName := newStatement.TableName
 	columnsRole := newStatement.ColumnsRole
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
-	result, err := services.HasTableMaintainerRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableMaintainerRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		err = services.AddTableUser(callerPriavteKey, common.HexToAddress(grantUser), tableName)
+		err = services.AddTableUser(callerPrivateKey, common.HexToAddress(grantUser), tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		err = services.GrantColumnsRole(callerPriavteKey, common.HexToAddress(grantUser), tableName, columnsRole)
+		err = services.GrantColumnsRole(callerPrivateKey, common.HexToAddress(grantUser), tableName, columnsRole)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		services.NormalResponse(w, response.PermissionResponseOk())
+		c.JSON(http.StatusOK, permissionResponse{0, "Ok"})
 		logger.InfoAPIPermissionGrantUser(newStatement)
 
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIPermissionGrantUserUnAuth(callerAddress.String())
 	}
 }

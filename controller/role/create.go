@@ -1,46 +1,30 @@
-package controller
+package role
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"net/http"
 	"strconv"
 
-	"net/http"
-
-	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
+	"github.com/gin-gonic/gin"
 )
 
-func CreateColumnRole(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIRoleCreate(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.Role
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIDatabaseCreate(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func CreateColumnRole(c *gin.Context) {
+	var newStatement role
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
 	columns := newStatement.Columns
 	columnsName := newStatement.ColumnsName
 	tableName := newStatement.TableName
-	callerPriavteKey := newStatement.PrivateKey
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerPrivateKey := newStatement.PrivateKey
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
@@ -50,24 +34,24 @@ func CreateColumnRole(w http.ResponseWriter, r *http.Request) {
 		columnsList = append(columnsList, strconv.Quote(column))
 	}
 
-	result, err := services.HasTableMaintainerRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableMaintainerRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		err = services.InitColumnsRole(callerPriavteKey, callerAddress, tableName, columnsList, columnsName)
+		err = services.InitColumnsRole(callerPrivateKey, callerAddress, tableName, columnsList, columnsName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 
-		services.NormalResponse(w, response.PermissionResponseOk())
+		c.JSON(http.StatusOK, permissionResponse{0, "Ok"})
 		logger.InfoAPIRoleCreate(newStatement)
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIRoleCreateUnAuth(callerAddress.String())
 	}
 }

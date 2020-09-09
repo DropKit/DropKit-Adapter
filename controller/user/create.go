@@ -1,17 +1,16 @@
-package controller
+package user
 
 import (
 	"net/http"
 
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
-	"github.com/DropKit/DropKit-Adapter/package/response"
-	"github.com/DropKit/DropKit-Adapter/services"
+	"github.com/gin-gonic/gin"
 )
 
-func GenerateRandomAccount(w http.ResponseWriter, r *http.Request) {
+func GenerateRandomAccount(c *gin.Context) {
 	newPrivateKey, newAddress := account.GenerateWallet()
 
-	services.NormalResponse(w, response.ResponseNewUser(newPrivateKey, newAddress))
+	c.JSON(http.StatusOK, userCreateResponse{0, "ok", newPrivateKey, newAddress})
 	logger.InfoAPIUserCreate()
 }

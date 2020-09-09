@@ -1,8 +1,6 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/DropKit/DropKit-Adapter/logger"
 	routes "github.com/DropKit/DropKit-Adapter/router"
 	"github.com/DropKit/DropKit-Adapter/services"
@@ -27,6 +25,6 @@ func init() {
 }
 
 func main() {
-	router := routes.NewRouter()
-	http.ListenAndServe(":"+viper.GetString(`DROPKIT.PORT`), router)
+	router := routes.SetupRouter()
+	router.Run(":" + viper.GetString(`DROPKIT.PORT`))
 }

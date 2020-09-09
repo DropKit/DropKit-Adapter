@@ -1,73 +1,72 @@
 package routes
 
 import (
-	"net/http"
-
-	db "github.com/DropKit/DropKit-Adapter/controller/db"
-	health "github.com/DropKit/DropKit-Adapter/controller/health"
-	payment "github.com/DropKit/DropKit-Adapter/controller/payment"
-	permission "github.com/DropKit/DropKit-Adapter/controller/permission"
-	role "github.com/DropKit/DropKit-Adapter/controller/role"
-	user "github.com/DropKit/DropKit-Adapter/controller/user"
-
-	"github.com/gorilla/mux"
+	"github.com/DropKit/DropKit-Adapter/controller/db"
+	"github.com/DropKit/DropKit-Adapter/controller/health"
+	"github.com/DropKit/DropKit-Adapter/controller/payment"
+	"github.com/DropKit/DropKit-Adapter/controller/permission"
+	"github.com/DropKit/DropKit-Adapter/controller/role"
+	"github.com/DropKit/DropKit-Adapter/controller/user"
+	"github.com/gin-gonic/gin"
 )
 
-type Route struct {
-	Method     string
-	Pattern    string
-	Handler    http.HandlerFunc
-	Middleware mux.MiddlewareFunc
-}
+// SetupRouter Create a new router object
+func SetupRouter() *gin.Engine {
+	r := gin.Default()
 
-var routes []Route
+	healthRoute := r.Group("/health")
+	{
+		healthRoute.GET("/ping", health.PerformHealthCheck)
+		healthRoute.GET("/dependency", health.CheckDependencyServices)
+	}
 
-func init() {
-	// Todo: Merge two service into one, just check the whole services.
-	register("GET", "/health/ping", health.PerformHealthCheck, nil)
-	register("GET", "/health/dependency", health.CheckDependencyServices, nil)
+	userRoute := r.Group("/user")
+	{
+		userRoute.GET("/create", user.GenerateRandomAccount)
+	}
 
-	register("GET", "/user/create", user.GenerateRandomAccount, nil)
+	// Add routing group for DB operations
+	dbRoute := r.Group("/db")
+	{
+		dbRoute.POST("/create", db.HandleDBCreation)
+		dbRoute.POST("/insert", db.HandleDBInsertion)
+		dbRoute.POST("/select", db.HandleDBSelection)
+		dbRoute.POST("/update", db.HandleDBUpdate)
+		dbRoute.POST("/delete", db.HandleDBDeletion)
+	}
 
-	register("POST", "/db/create", db.HandleDBCreation, nil)
-	register("POST", "/db/insert", db.HandleDBInsertion, nil)
-	register("POST", "/db/select", db.HandleDBSelection, nil)
-	register("POST", "/db/update", db.HandleDBUpdate, nil)
-	register("POST", "/db/delete", db.HandleDBDeletion, nil)
+	grantRoute := r.Group("/permission/grant/table")
+	{
+		grantRoute.POST("/owner", permission.GrantTableOwner)
+		grantRoute.POST("/maintainer", permission.GrantTableMaintainer)
+		grantRoute.POST("/viewer", permission.GrantTableViewer)
+	}
 
-	register("POST", "/permission/grant/table/owner", permission.GrantTableOwner, nil)
-	register("POST", "/permission/grant/table/maintainer", permission.GrantTableMaintainer, nil)
-	register("POST", "/permission/grant/table/viewer", permission.GrantTableViewer, nil)
+	revokeRoute := r.Group("/permission/revoke/table")
+	{
+		revokeRoute.POST("/owner", permission.RevokeTableOwner)
+		revokeRoute.POST("/maintainer", permission.RevokeTableMaintainer)
+		revokeRoute.POST("/viewer", permission.RevokeTableViewer)
+	}
 
-	register("POST", "/permission/revoke/table/owner", permission.RevokeTableOwner, nil)
-	register("POST", "/permission/revoke/table/maintainer", permission.RevokeTableMaintainer, nil)
-	register("POST", "/permission/revoke/table/viewer", permission.RevokeTableViewer, nil)
+	verifyRoute := r.Group("/permission/verify/table")
+	{
+		verifyRoute.POST("/owner", permission.VerifyTableOwner)
+		verifyRoute.POST("/maintainer", permission.VerifyTableMaintainer)
+		verifyRoute.POST("/viewer", permission.TableViewer)
+	}
 
-	register("POST", "/permission/verify/table/owner", permission.VerifyTableOwner, nil)
-	register("POST", "/permission/verify/table/maintainer", permission.VerifyTableMaintainer, nil)
-	register("POST", "/permission/verify/table/viewer", permission.TableViewer, nil)
+	paymentRoute := r.Group("/payment")
+	{
+		paymentRoute.POST("/mint", payment.MintToken)
+		paymentRoute.POST("/burn", payment.BurnToken)
+		paymentRoute.POST("/transfer", payment.TransferToken)
+		paymentRoute.POST("/balance", payment.GetAccountBalance)
+	}
 
-	register("POST", "/payment/mint", payment.MintToken, nil)
-	register("POST", "/payment/burn", payment.BurnToken, nil)
-	register("POST", "/payment/transfer", payment.TransferToken, nil)
-	register("POST", "/payment/balance", payment.GetAccountBalance, nil)
-
-	register("POST", "/role/create", role.CreateColumnRole, nil)
-}
-
-func NewRouter() *mux.Router {
-	r := mux.NewRouter()
-	for _, route := range routes {
-		r.Methods(route.Method).
-			Path(route.Pattern).
-			Handler(route.Handler)
-		if route.Middleware != nil {
-			r.Use(route.Middleware)
-		}
+	roleRoute := r.Group("/role")
+	{
+		roleRoute.POST("/create", role.CreateColumnRole)
 	}
 	return r
-}
-
-func register(method, pattern string, handler http.HandlerFunc, middleware mux.MiddlewareFunc) {
-	routes = append(routes, Route{method, pattern, handler, middleware})
 }
