@@ -21,7 +21,7 @@ func CreateDropKitInstance() (*dropkit.DropkitContract, error) {
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "instance-creater").Error(err.Error())
+		logger.InternalLogger.WithField("component", "instance-creator").Error(err.Error())
 		return nil, err
 	}
 
@@ -29,7 +29,7 @@ func CreateDropKitInstance() (*dropkit.DropkitContract, error) {
 
 	contractInstance, err := dropkit.NewDropkitContract(contractAddress, quorumClient)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "instance-creater").Error(err.Error())
+		logger.InternalLogger.WithField("component", "instance-creator").Error(err.Error())
 		return nil, err
 	}
 
@@ -41,19 +41,19 @@ func CreateAuthInstance(privatekeyHex string) (*bind.TransactOpts, error) {
 
 	quorumClient, err := ethclient.Dial(quorumEndpoint)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "instance-creater").Error(err.Error())
+		logger.InternalLogger.WithField("component", "instance-creator").Error(err.Error())
 		return nil, err
 	}
 	privateKey, err := crypto.HexToECDSA(privatekeyHex)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "instance-creater").Error(err.Error())
+		logger.InternalLogger.WithField("component", "instance-creator").Error(err.Error())
 		return nil, err
 	}
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		logger.InternalLogger.WithField("component", "instance-creater").Error(err.Error())
+		logger.InternalLogger.WithField("component", "instance-creator").Error(err.Error())
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func CreateAuthInstance(privatekeyHex string) (*bind.TransactOpts, error) {
 
 	nonce, err := quorumClient.PendingNonceAt(context.Background(), accountAddress)
 	if err != nil {
-		logger.InternalLogger.WithField("component", "instance-creater").Error(err.Error())
+		logger.InternalLogger.WithField("component", "instance-creator").Error(err.Error())
 		return nil, err
 	}
 

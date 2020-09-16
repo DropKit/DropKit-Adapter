@@ -1,12 +1,9 @@
-package controller
+package db
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"net/http"
+	"strings"
 
-	"github.com/DropKit/DropKit-Adapter/constants"
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/account"
 	"github.com/DropKit/DropKit-Adapter/package/crypto/transaction"
@@ -15,60 +12,48 @@ import (
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/package/utils"
 	"github.com/DropKit/DropKit-Adapter/services"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
-func HandleDBInsertion(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		logger.WarnAPIDatabaseInsert(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
-		return
-	}
-
-	if body != nil {
-		defer r.Body.Close()
-	}
-
-	var newStatement constants.SQL
-	err = json.Unmarshal(body, &newStatement)
-	if err != nil {
-		logger.WarnAPIDatabaseInsert(err)
-		services.NormalResponse(w, response.ResponseBadRequest())
+func HandleDBInsertion(c *gin.Context) {
+	var newStatement sql
+	if err := c.ShouldBindJSON(&newStatement); err != nil {
+		c.JSON(http.StatusOK, response.ResponseBadRequest())
 		return
 	}
 
 	sqlCommand := newStatement.Statement
-	callerPriavteKey := newStatement.PrivateKey
-	callerAddress, err := account.PrivateKeyToPublicKey(callerPriavteKey)
+	callerPrivateKey := newStatement.PrivateKey
+	callerAddress, err := account.PrivateKeyToPublicKey(callerPrivateKey)
 	if err != nil {
-		services.NormalResponse(w, response.ResponsePKConvertError())
+		c.JSON(http.StatusOK, response.ResponsePKConvertError())
 		return
 	}
 
 	tableName, err := parser.GetTableName(sqlCommand)
 	if err != nil {
-		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
+		c.JSON(http.StatusOK, response.ErrorResponse{Code: 20202, Message: "Bad SQL statement"})
 		return
 	}
 
 	columnsNames, err := columns.GetInsertColumns(sqlCommand)
 	if err != nil {
-		services.NormalResponse(w, response.SQLResponseBadSQLStatement())
+		c.JSON(http.StatusOK, response.ErrorResponse{Code: 20202, Message: "Bad SQL statement"})
 		return
 	}
 
-	result, err := services.HasTableMaintainerRole(callerPriavteKey, callerAddress, tableName)
+	result, err := services.HasTableMaintainerRole(callerPrivateKey, callerAddress, tableName)
 	if err != nil {
-		services.NormalResponse(w, response.ResponseInternalError())
+		c.JSON(http.StatusOK, response.ResponseInternalError())
 		return
 	}
 
 	switch result {
 	case true:
-		columnsCanInsert, err := services.GetColumnsRole(callerPriavteKey, callerAddress, tableName)
+		columnsCanInsert, err := services.GetColumnsRole(callerPrivateKey, callerAddress, tableName)
 		if err != nil {
-			services.NormalResponse(w, response.ResponseInternalError())
+			c.JSON(http.StatusOK, response.ResponseInternalError())
 			return
 		}
 		columnsAuth := utils.CompareColumns(columnsCanInsert, columnsNames)
@@ -77,31 +62,31 @@ func HandleDBInsertion(w http.ResponseWriter, r *http.Request) {
 		case true:
 			tableAddress, err := services.GetTableMeta(tableName)
 			if err != nil {
-				services.NormalResponse(w, response.ResponseInternalError())
+				c.JSON(http.StatusOK, response.ResponseInternalError())
 				return
 			}
 
 			err = services.Exec(sqlCommand)
 			if err != nil {
-				services.NormalResponse(w, response.SQLResponseDatabaseError(err))
+				c.JSON(http.StatusOK, response.ErrorResponseWithReason{Code: 20201, Message: "Database error", Reason: (strings.Split(err.Error(), "pq: "))[1]})
 				return
 			}
 
-			err = services.Consume(callerPriavteKey, callerAddress, viper.GetInt64(`PRICE.INSERT`))
+			err = services.Consume(callerPrivateKey, callerAddress, viper.GetInt64(`PRICE.INSERT`))
 			if err != nil {
-				services.NormalResponse(w, response.ResponseExceedsBalance())
+				c.JSON(http.StatusOK, response.ResponseExceedsBalance())
 				return
 			}
 
-			aduitTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPriavteKey)
-			services.NormalResponse(w, response.SQLExecResponseOk(aduitTransactionHash))
+			auditTransactionHash := transaction.SendRawTransaction(tableAddress, sqlCommand, 0, callerPrivateKey)
+			c.JSON(http.StatusOK, sqlExecResponse{0, "Ok", auditTransactionHash})
 			logger.InfoAPIDatabaseInsert(newStatement)
 		case false:
-			services.NormalResponse(w, response.ResponseUnauthorized())
+			c.JSON(http.StatusOK, response.ResponseUnauthorized())
 			logger.WarnAPIDatabaseInsertUnAuth(callerAddress.String())
 		}
 	case false:
-		services.NormalResponse(w, response.ResponseUnauthorized())
+		c.JSON(http.StatusOK, response.ResponseUnauthorized())
 		logger.WarnAPIDatabaseInsertUnAuth(callerAddress.String())
 	}
 }

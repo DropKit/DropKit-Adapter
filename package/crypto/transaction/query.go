@@ -26,9 +26,8 @@ func beenConfirmed(transactionHash string) bool {
 
 	if isPending == true {
 		return false
-	} else {
-		return true
 	}
+	return true
 }
 
 func CheckTransactionConfirmed(transactionHash string) {

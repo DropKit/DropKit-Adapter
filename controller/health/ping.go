@@ -1,14 +1,14 @@
-package controller
+package health
 
 import (
 	"net/http"
 
 	"github.com/DropKit/DropKit-Adapter/logger"
-	"github.com/DropKit/DropKit-Adapter/package/response"
-	"github.com/DropKit/DropKit-Adapter/services"
+	"github.com/gin-gonic/gin"
 )
 
-func PerformHealthCheck(w http.ResponseWriter, r *http.Request) {
-	services.NormalResponse(w, response.ResponseServerOk())
+// PerformHealthCheck Response pong for checking server status
+func PerformHealthCheck(c *gin.Context) {
+	c.String(http.StatusOK, "pong")
 	logger.InfoAPIPing()
 }

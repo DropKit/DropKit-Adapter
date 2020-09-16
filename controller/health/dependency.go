@@ -1,4 +1,4 @@
-package controller
+package health
 
 import (
 	"net/http"
@@ -6,16 +6,17 @@ import (
 	"github.com/DropKit/DropKit-Adapter/logger"
 	"github.com/DropKit/DropKit-Adapter/package/response"
 	"github.com/DropKit/DropKit-Adapter/services"
+	"github.com/gin-gonic/gin"
 )
 
-func CheckDependencyServices(w http.ResponseWriter, r *http.Request) {
+func CheckDependencyServices(c *gin.Context) {
 	service, err := services.DependencyServicesCheck()
 	if err != nil {
 		logger.ErrorDependencyService(service, err)
-		services.NormalResponse(w, response.ResponseDependencyError())
+		c.JSON(http.StatusOK, response.ResponseDependencyError())
 		return
 	}
 
-	services.NormalResponse(w, response.ResponseServerOk())
+	c.JSON(http.StatusOK, response.ResponseServerOk())
 	logger.InfoAPIDenpendencyOk()
 }
