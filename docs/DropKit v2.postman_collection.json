@@ -1,0 +1,1656 @@
+{
+	"info": {
+		"_postman_id": "45ce3356-2833-4697-be62-7107bd8c1879",
+		"name": "DropKit v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/user/create",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/user/create",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/user/create",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"user",
+								"create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 04 Sep 2020 04:38:53 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "160"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"ok\",\n    \"PrivateKey\": \"1c081ee94a9cb15b321e8d12c8fb762c70d14077dcfd01b67fbd7ab684150718\",\n    \"Account\": \"0x8ebf901882d914552f509675b4bC57c55C58E5e8\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/db/create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n\t\"db_statement\": \"CREATE TABLE employee0 (id int PRIMARY KEY, name varchar, age int, language varchar)\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/db/create",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"db",
+						"create"
+					]
+				},
+				"description": "API routes for creating a table."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n\t\"db_statement\": \"CREATE TABLE employee0 (id int PRIMARY KEY, name varchar, age int, language varchar)\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/db/create",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"db",
+								"create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 04 Sep 2020 03:14:25 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "102"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Audit\": \"0xd429b1f4a864dc608488e61b0c17c31035a07a7edc53c25bc3747eb09faf5802\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/db/insert",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"db_statement\": \"INSERT INTO employee0 (id, name, age, language) VALUES (1, 'John', 35, 'Go')\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/db/insert",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"db",
+						"insert"
+					]
+				},
+				"description": "API routes for `INSERT` operations."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"db_statement\": \"INSERT INTO employee0 (id, name, age, language) VALUES (1, 'John', 35, 'Go')\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/db/insert",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"db",
+								"insert"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 04 Sep 2020 04:34:55 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "102"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Audit\": \"0x82803cd695872c379834ffcc8ba43caf143cddebdb7f0c1a40a0c39d07b45d1d\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/db/select",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"db_statement\": \"SELECT name, age, language FROM employee0 WHERE id = 1\",\n    \"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/db/select",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"db",
+						"select"
+					]
+				},
+				"description": "API routes for `SELECT` operations."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"db_statement\": \"SELECT name, age, language FROM employee0 WHERE id = 1\",\n    \"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/db/select",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"db",
+								"select"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 04 Sep 2020 04:39:09 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "152"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Data\": [\n        {\n            \"age\": 35,\n            \"language\": \"Go\",\n            \"name\": \"John\"\n        }\n    ],\n    \"Audit\": \"0x5afb508adb1c2ce21de413ca819c3659aa41de36cd3acf220a3db52ede2ecd0d\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/db/update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"db_statement\": \"UPDATE employee0 SET name='David' WHERE id = 1\",\n    \"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/db/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"db",
+						"update"
+					]
+				},
+				"description": "API routes for `UPDATE` operations."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"db_statement\": \"UPDATE employee0 SET name='David' WHERE id = 1\",\n    \"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/db/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"db",
+								"update"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 04 Sep 2020 04:39:30 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "102"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Audit\": \"0xc7e3bfb188f45030361a583fc45fcb6fc0e318a404e99d1f9b6dc1eb2a666dab\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/db/delete",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"db_statement\": \"DELETE FROM employee0 WHERE id = 1\",\n    \"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/db/delete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"db",
+						"delete"
+					]
+				},
+				"description": "API routes for `DELETE` operations."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"db_statement\": \"DELETE FROM employee0 WHERE id = 1\",\n    \"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/db/delete",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"db",
+								"delete"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 04 Sep 2020 04:40:09 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "102"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Audit\": \"0xb7beebb03a9844a294582db777300d4e601fd2d654df1a8c95ca90bafcc001ba\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/grant/table/owner",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/grant/table/owner",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"grant",
+						"table",
+						"owner"
+					]
+				},
+				"description": "Authorize a user as owner.\n\nAn owner can take all the `CRUD` operations."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/grant/table/owner",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"grant",
+								"table",
+								"owner"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:18:31 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "25"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/grant/table/maintainer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"column_role\": \"name_reader\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/grant/table/maintainer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"grant",
+						"table",
+						"maintainer"
+					]
+				},
+				"description": "Authorize a user as maintainer.\n\nA maintainer is only allowed to do `INSERT`, `UPDATE` and `SELECT`."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"column_role\": \"name_reader\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/grant/table/maintainer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"grant",
+								"table",
+								"maintainer"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:20:06 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "25"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/grant/table/viewer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"column_role\": \"name_reader\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/grant/table/viewer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"grant",
+						"table",
+						"viewer"
+					]
+				},
+				"description": "Authorize a user as viewer.\n\nA viewer can only take `SELECT` operation."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"column_role\": \"name_reader\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/grant/table/viewer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"grant",
+								"table",
+								"viewer"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:20:21 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "25"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/revoke/table/owner",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/revoke/table/owner",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"revoke",
+						"table",
+						"owner"
+					]
+				},
+				"description": "Revoke a user's permission from being owner."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/revoke/table/owner",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"revoke",
+								"table",
+								"owner"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:21:47 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "25"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/revoke/table/maintainer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"column_role\": \"name_reader\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/revoke/table/maintainer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"revoke",
+						"table",
+						"maintainer"
+					]
+				},
+				"description": "Revoke a user's permission from being maintainer."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"column_role\": \"name_reader\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/revoke/table/maintainer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"revoke",
+								"table",
+								"maintainer"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:21:40 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "25"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/revoke/table/viewer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"column_role\": \"name_reader\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/revoke/table/viewer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"revoke",
+						"table",
+						"viewer"
+					]
+				},
+				"description": "Revoke a user's permission from being viewer."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"column_role\": \"name_reader\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/revoke/table/viewer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"revoke",
+								"table",
+								"viewer"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:21:30 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "25"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/verify/table/owner",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/verify/table/owner",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"verify",
+						"table",
+						"owner"
+					]
+				},
+				"description": "Verify whether a user is owner or not."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/verify/table/owner",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"verify",
+								"table",
+								"owner"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:20:55 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Response\": true\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/verify/table/maintainer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/verify/table/maintainer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"verify",
+						"table",
+						"maintainer"
+					]
+				},
+				"description": "Verify whether a user is maintainer or not."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/verify/table/maintainer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"verify",
+								"table",
+								"maintainer"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:21:08 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Response\": true\n}"
+				}
+			]
+		},
+		{
+			"name": "/permission/verify/table/viewer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/permission/verify/table/viewer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"permission",
+						"verify",
+						"table",
+						"viewer"
+					]
+				},
+				"description": "Verify whether a user is viewer or not."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"0xD2633fAA7dD1a40b1759Aa40fa5B69A18cEa02f1\",\n\t\"table_name\": \"employee0\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/permission/verify/table/viewer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"permission",
+								"verify",
+								"table",
+								"viewer"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:21:18 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Response\": true\n}"
+				}
+			]
+		},
+		{
+			"name": "/payment/mint",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"amount\": 1000,\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/payment/mint",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"payment",
+						"mint"
+					]
+				},
+				"description": "Mint tokens for accessing control."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"amount\": 1000,\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/payment/mint",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"payment",
+								"mint"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:22:10 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "101"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Hash\": \"0xce82f58476129f4164d7ef99d017a306a3262f7f43c6936d51ccfc50aede7501\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/payment/burn",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"amount\": 1000,\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/payment/burn",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"payment",
+						"burn"
+					]
+				},
+				"description": "Burn given number of tokens."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"amount\": 1000,\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/payment/burn",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"payment",
+								"burn"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:22:57 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "101"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Hash\": \"0xf6b00c0a6eb55b9a108a0daea5d7dbfc68b46dc28133357dea34b93f9ac95f58\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/payment/transfer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"amount\": 10,\n\t\"user_name\": \"0x35afcB17dBdE8E20Fb904c707eADf698DBB3635c\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/payment/transfer",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"payment",
+						"transfer"
+					]
+				},
+				"description": "Transfer tokens to another account."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"amount\": 10,\n\t\"user_name\": \"0x35afcB17dBdE8E20Fb904c707eADf698DBB3635c\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/payment/transfer",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"payment",
+								"transfer"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:22:30 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "101"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Hash\": \"0xe5a8a220b0c8f3a807bab51289e23d2ad09662eb4fec5075c96f31dbcc185983\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/payment/balance",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"user_name\": \"0x35afcB17dBdE8E20Fb904c707eADf698DBB3635c\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/payment/balance",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"payment",
+						"balance"
+					],
+					"query": [
+						{
+							"key": "user_name",
+							"value": "0xbe87BddB69AD9602bC58E2AF6813923D6EA18cb7",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Check the balance of an account."
+			},
+			"response": [
+				{
+					"name": "/payment/balance",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user_name\": \"0x35afcB17dBdE8E20Fb904c707eADf698DBB3635c\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/payment/balance",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"payment",
+								"balance"
+							],
+							"query": [
+								{
+									"key": "user_name",
+									"value": "0xbe87BddB69AD9602bC58E2AF6813923D6EA18cb7",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:22:45 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "37"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Ok\",\n    \"Amount\": 10\n}"
+				}
+			]
+		},
+		{
+			"name": "/health/ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/health/ping",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"health",
+						"ping"
+					]
+				},
+				"description": "Return `pong` for checking the status of DropKit-Adapter."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/health/ping",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"health",
+								"ping"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:25:45 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "4"
+						}
+					],
+					"cookie": [],
+					"body": "pong"
+				}
+			]
+		},
+		{
+			"name": "/health/dependency",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/health/dependency",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"health",
+						"dependency"
+					]
+				},
+				"description": "API for checking the status of DropKit-Adapter."
+			},
+			"response": [
+				{
+					"name": "normal",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/health/dependency",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"health",
+								"dependency"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 07 Sep 2020 02:23:33 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "27"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Code\": 0,\n    \"Message\": \"Pong\"\n}"
+				}
+			]
+		},
+		{
+			"name": "/role/create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"columns\": [\"name\",\"age\"],\n\t\"role_name\": \"name_reader\",\n\t\"table_name\": \"employee0p\",\n\t\"caller_pk\": \"e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/role/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"role",
+						"create"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
