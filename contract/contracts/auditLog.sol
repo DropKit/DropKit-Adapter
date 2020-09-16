@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.6.0 <0.7.0;
+pragma solidity 0.5.x;
 
 /**
  * @title Storage
  * @dev Store & retrieve value in a variable
  */
-contract audit_log {
+contract auditLog {
     // The table for mapping DB table name and address which save the the audit log of DB
     // operations.
     mapping(string => address) auditLogMap;
