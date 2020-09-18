@@ -1,39 +1,60 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.5.x;
 
-/**
- * @title Storage
- * @dev Store & retrieve value in a variable
- */
-contract auditLog {
-    // The table for mapping DB table name and address which save the the audit log of DB
-    // operations.
-    mapping(string => address) auditLogMap;
+contract SK2AddrTable {
+    address internal deployerAddr;
+    string ownerSK;
+    enum ROLE {NULL, VIEWER, MAINTAINER, OWNER}
+    mapping(string => uint8) public roleMap;
+    event statementLog(string sk, string statement);
 
-    /**
-     * @dev Add a new DB table name and corresponding ethereum public key
-     */
-    // FIXME We need to implement a mechanism to avoid tableName conflicting among different organizations
-    function addTable(string calldata tableName, address dbAccount)
-        external
-        returns (bool)
-    {
-        if (auditLogMap[tableName] == address(0)) {
-            auditLogMap[tableName] = dbAccount;
-            return true;
-        }
-        return false;
+    modifier ownership {
+        assert(deployerAddr == msg.sender);
+        _;
     }
 
-    /**
-     * @dev Retrieve address with given tableName
-     * @return table Ethereum address
-     */
-    function retrieve(string calldata tableName)
+    // Initailize default state
+    constructor(string memory initOwnerSK) public {
+        // Currently only the deployer can interact with Table Contract
+        deployerAddr = msg.sender;
+        ownerSK = initOwnerSK;
+        roleMap[initOwnerSK] = uint8(ROLE.OWNER);
+    }
+
+    function appendLog(string calldata sk, string calldata statement)
+        external
+        ownership
+        returns (bool)
+    {
+        // Apppend the statement into the contract with event log (sk, and statement)
+        emit statementLog(sk, statement);
+        return true;
+    }
+
+    function grantPermission(string calldata sk, uint8 role)
+        external
+        ownership
+        returns (bool)
+    {
+        roleMap[sk] = role;
+        return true;
+    }
+
+    function verifyPermission(string calldata sk)
         external
         view
-        returns (address)
+        ownership
+        returns (uint8)
     {
-        return auditLogMap[tableName];
+        return roleMap[sk];
+    }
+
+    function revokePermission(string calldata sk)
+        external
+        ownership
+        returns (bool)
+    {
+        roleMap[sk] = uint8(ROLE.NULL);
+        return true;
     }
 }
