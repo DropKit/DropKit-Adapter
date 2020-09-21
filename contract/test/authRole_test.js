@@ -1,10 +1,6 @@
 const authRole = artifacts.require("Authentication");
 
 contract("authRole", function (accounts) {
-  const skOwnerTest =
-    "e0302f799ee2e6bcff366cf395dda8225e0a3ae9250740aeabf8e174a8d55c03";
-  const skMaintainerTest =
-    "aaf4f5s4df5sd47h2ns4i54yk24a65sg7jt7iagj8lo4lj55wfwefjjjukaewqq4";
   const tableNameTest = "tableName";
   const addrNullTest = 0x0000000000000000000000000000000000000000;
   const dbStatementTest = "UPDATE employee0 SET name='David' WHERE id = 1";
@@ -16,7 +12,6 @@ contract("authRole", function (accounts) {
   it("Write with 'addNewTableContract'", async () => {
     const authRoleInstance = await authRole.deployed();
     const authRoleAddNewTableContract = await authRoleInstance.addNewTableContract.call(
-      skOwnerTest,
       tableNameTest
     );
 
@@ -30,7 +25,6 @@ contract("authRole", function (accounts) {
   it("Retrieve address from mapping", async () => {
     const authRoleInstance = await authRole.deployed();
     const authRoleAddNewTableContract = await authRoleInstance.addNewTableContract.sendTransaction(
-      skOwnerTest,
       tableNameTest
     );
     const authRoleRetrieve = await authRoleInstance.getAddr.call(tableNameTest);
@@ -44,12 +38,10 @@ contract("authRole", function (accounts) {
   it("Append audit log to Table Contract", async () => {
     const authRoleInstance = await authRole.deployed();
     const authRoleAddNewTableContract = await authRoleInstance.addNewTableContract.sendTransaction(
-      skOwnerTest,
       tableNameTest
     );
 
     const authRoleAppend = await authRoleInstance.appendLog.call(
-      skOwnerTest,
       tableNameTest,
       dbStatementTest,
       ownerRole
@@ -61,96 +53,92 @@ contract("authRole", function (accounts) {
     );
   });
 
-  it("Make a user as MAINTAINER", async () => {
+  it("Grant the given address (`accounts[1]`) as MAINTAINER", async () => {
     const authRoleInstance = await authRole.deployed();
     const authRoleAddNewTableContract = await authRoleInstance.addNewTableContract.sendTransaction(
-      skOwnerTest,
       tableNameTest
     );
 
     const authGrantPermission = await authRoleInstance.grantPermission.call(
-      skOwnerTest,
-      skMaintainerTest,
+      accounts[1],
       tableNameTest,
       maintainerRole
     );
-    assert.equal(authGrantPermission, true, "Assign skTest as MAINTAINER");
+    assert.equal(
+      authGrantPermission,
+      true,
+      "Assign the given address as a MAINTAINER"
+    );
   });
 
-  it("Check whether skTest is a MAINTAINER", async () => {
+  it("Check whether the given address is a MAINTAINER or not", async () => {
     const authRoleInstance = await authRole.deployed();
     const authRoleAddNewTableContract = await authRoleInstance.addNewTableContract.sendTransaction(
-      skOwnerTest,
       tableNameTest
     );
 
     const authGrantPermission = await authRoleInstance.grantPermission.sendTransaction(
-      skOwnerTest,
-      skMaintainerTest,
+      accounts[1],
       tableNameTest,
       maintainerRole
     );
     const authVerifyPermission = await authRoleInstance.verifyPermission.call(
-      skMaintainerTest,
+      accounts[1],
       tableNameTest
     );
     assert.equal(
       authVerifyPermission,
       maintainerRole,
-      "skTest doesn't refer to a MAINTAINER role"
+      "The given address doesn't refer to a MAINTAINER role"
     );
   });
 
-  it("Revoke skTest from being a MAINTAINER", async () => {
+  it("Revoke the given address from being a MAINTAINER", async () => {
     const authRoleInstance = await authRole.deployed();
     const authRoleAddNewTableContract = await authRoleInstance.addNewTableContract.sendTransaction(
-      skOwnerTest,
       tableNameTest
     );
 
     const authGrantPermission = await authRoleInstance.grantPermission.sendTransaction(
-      skOwnerTest,
-      skMaintainerTest,
+      accounts[1],
       tableNameTest,
       maintainerRole
     );
     var authVerifyPermission = await authRoleInstance.verifyPermission.call(
-      skMaintainerTest,
+      accounts[1],
       tableNameTest
     );
     assert.equal(
       authVerifyPermission,
       maintainerRole,
-      "skTest doesn't refer to a MAINTAINER role"
+      "The given address doesn't refer to a MAINTAINER role"
     );
 
     // Check the response
     var authRevokePermission = await authRoleInstance.revokePermission.call(
-      skOwnerTest,
-      skMaintainerTest,
+      accounts[1],
       tableNameTest
     );
     assert.equal(
       authRevokePermission,
       true,
-      "Failed to revoke the role of skTest from being a MAINTAINER"
+      "Failed to revoke the role of the given address from being a MAINTAINER"
     );
 
     // Revoke again for modifying the data on Blockchain
     authRevokePermission = await authRoleInstance.revokePermission.sendTransaction(
-      skOwnerTest,
-      skMaintainerTest,
+      accounts[1],
       tableNameTest
     );
     authVerifyPermission = await authRoleInstance.verifyPermission.call(
-      skMaintainerTest,
+      accounts[1],
       tableNameTest
     );
 
     assert.equal(
       authVerifyPermission,
       nullRole,
-      "Failed to revoke the role of skTest from being a MAINTAINER"
+      "Failed to revoke the role of the given address from being a MAINTAINER"
     );
   });
 });
