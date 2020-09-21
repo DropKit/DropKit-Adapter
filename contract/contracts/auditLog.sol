@@ -3,10 +3,9 @@ pragma solidity 0.5.x;
 
 contract SK2AddrTable {
     address internal deployerAddr;
-    string ownerSK;
     enum ROLE {NULL, VIEWER, MAINTAINER, OWNER}
-    mapping(string => uint8) public roleMap;
-    event statementLog(string sk, string statement);
+    mapping(address => uint8) public roleMap;
+    event statementLog(address addr, string statement);
 
     modifier ownership {
         assert(deployerAddr == msg.sender);
@@ -14,47 +13,42 @@ contract SK2AddrTable {
     }
 
     // Initailize default state
-    constructor(string memory initOwnerSK) public {
+    constructor(address dbTableOwnerAddr) public {
         // Currently only the deployer can interact with Table Contract
         deployerAddr = msg.sender;
-        ownerSK = initOwnerSK;
-        roleMap[initOwnerSK] = uint8(ROLE.OWNER);
+        roleMap[dbTableOwnerAddr] = uint8(ROLE.OWNER);
     }
 
-    function appendLog(string calldata sk, string calldata statement)
+    function appendLog(address addr, string calldata statement)
         external
         ownership
         returns (bool)
     {
-        // Apppend the statement into the contract with event log (sk, and statement)
-        emit statementLog(sk, statement);
+        // Apppend the statement into the contract with event log (addr, and statement)
+        emit statementLog(addr, statement);
         return true;
     }
 
-    function grantPermission(string calldata sk, uint8 role)
+    function grantPermission(address addr, uint8 role)
         external
         ownership
         returns (bool)
     {
-        roleMap[sk] = role;
+        roleMap[addr] = role;
         return true;
     }
 
-    function verifyPermission(string calldata sk)
+    function verifyPermission(address addr)
         external
         view
         ownership
         returns (uint8)
     {
-        return roleMap[sk];
+        return roleMap[addr];
     }
 
-    function revokePermission(string calldata sk)
-        external
-        ownership
-        returns (bool)
-    {
-        roleMap[sk] = uint8(ROLE.NULL);
+    function revokePermission(address addr) external ownership returns (bool) {
+        roleMap[addr] = uint8(ROLE.NULL);
         return true;
     }
 }
