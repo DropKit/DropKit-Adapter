@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "45ce3356-2833-4697-be62-7107bd8c1879",
+		"_postman_id": "e72d1ef2-6659-4403-b514-74536470479b",
 		"name": "DropKit v2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -20,7 +20,8 @@
 						"user",
 						"create"
 					]
-				}
+				},
+				"description": "Create a new user which has no permission and no role to do anything. This API is used for generating EC key pair only."
 			},
 			"response": [
 				{
@@ -1647,7 +1648,8 @@
 						"role",
 						"create"
 					]
-				}
+				},
+				"description": "Create a new role. A role would have certain permission among different columns, and a role depends on the tables. Therefore, different tables may have the same role name, but they have different permission in their own table."
 			},
 			"response": []
 		}
