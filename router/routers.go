@@ -86,5 +86,6 @@ func SetupRouter() *gin.Engine {
 	{
 		roleRoute.POST("/create", role.CreateColumnRole)
 	}
-	return r
+
+	return r, srv
 }
