@@ -1,0 +1,26 @@
+{
+  "name": "regression",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@types/node": "^14.0.1",
+    "jest": "^26.4.2",
+    "nodemon": "^2.0.3",
+    "ts-jest": "^26.3.0",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.2"
+  },
+  "scripts": {
+    "start": "ts-node index.ts",
+    "live": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts",
+    "build": "tsc index.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@types/jest": "^26.0.13",
+    "@types/sleep": "^0.0.7",
+    "axios": "^0.19.2",
+    "colors": "^1.4.0",
+    "sleep": "^6.1.0"
+  }
+}
