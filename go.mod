@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/antonfisher/nested-logrus-formatter v1.0.3
 	github.com/ethereum/go-ethereum v1.9.12
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.0
 	github.com/lfittl/pg_query_go v1.0.0
 	github.com/lib/pq v1.3.0
 	github.com/mattn/go-colorable v0.1.4 // indirect
