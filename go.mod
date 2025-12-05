@@ -14,7 +14,7 @@ require (
 	github.com/lib/pq v1.3.0
 	github.com/prometheus/common v0.39.0 // indirect
 	github.com/prometheus/procfs v0.9.0 // indirect
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.1
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.8.4
 	github.com/wxnacy/wgo v1.0.4
